@@ -1,0 +1,86 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# --- Environment variables / secrets ---
+.env
+.env.local
+.env.*.local
+# Note: .env.example IS committed intentionally — do not add it here
+
+# --- Database ---
+database/churn.db
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+*.db-journal
+
+# --- Raw / large data (regenerate via ETL, don't commit) ---
+data/raw/*.csv
+!data/raw/.gitkeep
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# --- Type checking / linting caches ---
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+dmypy.json
+
+# --- Jupyter (if used for EDA) ---
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# --- Power BI local cache/temp (not the .pbix file itself — that's a deliverable) ---
+*.pbix.bak
+~$*.pbix
+
+# --- OS-specific ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Logs ---
+*.log
+logs/
