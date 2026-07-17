@@ -29,7 +29,7 @@ An end-to-end analytics platform that identifies customers likely to churn and s
 ### Prerequisites
 
 - **Git** — [install instructions](https://git-scm.com/downloads)
-- **Python 3.12** — confirm with `python3 --version`
+- **Python 3.12** — confirm with `python --version`
 - A GitHub account added as a collaborator on this repository
 
 ### Clone the repository
@@ -50,10 +50,10 @@ git config --global user.name "Your Name"
 git config --global user.email "your-email@example.com"
 
 # Confirm Python 3.12 is installed
-python3 --version
+python --version
 
 # Create and activate a virtual environment
-python3 -m venv venv
+python -m venv venv
 source venv/bin/activate   # on Windows: venv\Scripts\activate
 
 # Install dependencies
@@ -321,7 +321,7 @@ Given the compressed timeline, keep PRs small and scoped to a single issue — t
 
 ---
 
-## Sprint Board
+## Sprint Board (Click on the Projects Tab)
 
 GitHub Projects board with these columns, in order:
 
