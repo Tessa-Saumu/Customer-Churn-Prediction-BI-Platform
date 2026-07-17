@@ -197,7 +197,7 @@ A task is complete only if:
 - Type hints included (Python's `typing` module / built-in generics — no untyped function signatures)
 - Logging included (`logging` module — no `print()` statements)
 - Documentation updated
-- PR approved by Tessa/Theresia (first-pass review)
+- PR approved by Theresia (first-pass review)
 - Signed off by Michael (final review — required on **every** PR before merge)
 - Merged into `main`
 
@@ -314,7 +314,7 @@ Power BI, connected to `database/churn.db` via an **ODBC driver** (install the S
 
 Every PR follows a two-step gate:
 
-1. **First-pass review** — Tessa or Theresia reviews for correctness, adherence to the Definition of Done, and scope alignment.
+1. **First-pass review** — Theresia reviews for correctness, adherence to the Definition of Done, and scope alignment.
 2. **Final sign-off** — Michael reviews and signs off on **every individual PR** before it can merge. This is a hard, per-PR gate, not a milestone-level check.
 
 Given the compressed timeline, keep PRs small and scoped to a single issue — this keeps both review passes fast.
@@ -329,7 +329,7 @@ GitHub Projects board with these columns, in order:
 
 - **Backlog:** everything identified as needed for the project, including work not yet unblocked.
 - **To Do:** the subset of Backlog that's unblocked and ready to be picked up right now.
-- **In Review:** open PR, awaiting Tessa/Theresia's pass.
+- **In Review:** open PR, awaiting Theresia's pass.
 - **Changes Requested:** sent back after review; move back to In Review once addressed.
 - **Final Review (Michael):** passed first review, awaiting Michael's sign-off.
 - **Done:** merged into `main`.
