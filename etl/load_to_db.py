@@ -30,33 +30,29 @@ logger = logging.getLogger(__name__)
 def load_to_db() -> None:
     raw_df = load_data(DATASET_PATH)
     clean_df = clean_data(raw_df)
+
     logger.info("Rows ready to insert: %d", len(clean_df))
 
     connection = get_connection()
+
     try:
-        # TODO: insert clean_df into the customers table. The simplest
-        # correct approach is:
-        #
-        #   clean_df.to_sql("customers", connection,
-        #                    if_exists="append", index=False)
-        #
-        # A few things to actually check before you run this, not just
-        # copy it:
-        #   - clean_df's column names must match schema.sql's column
-        #     names exactly -- to_sql will not warn you if they don't
-        #     line up the way you think they do.
-        #   - use if_exists="append", not "replace" -- "replace" would
-        #     drop the table init_db.py just created from schema.sql.
-        #   - if you need this to be safely re-runnable without
-        #     duplicating rows, delete existing rows first
-        #     (connection.execute("DELETE FROM customers")) before the
-        #     insert, or dedupe on customer_id afterward -- your call,
-        #     just be deliberate about it.
-        #
-        # Log the row count actually inserted once this runs -- that's
-        # one of the three required log points for this issue ("rows
-        # inserted").
-        pass
+    # Remove existing records so the ETL can be run multiple
+    # times without creating duplicate customer records.
+
+        connection.execute("DELETE FROM customers")
+
+    
+        clean_df.to_sql(
+            "customers",
+            connection,
+            if_exists="append",
+            index=False,
+    )
+
+        connection.commit()
+
+        logger.info("Rows inserted: %d", len(clean_df))
+
     finally:
         connection.close()
 

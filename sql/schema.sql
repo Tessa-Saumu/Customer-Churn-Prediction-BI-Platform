@@ -30,20 +30,73 @@
 
 CREATE TABLE IF NOT EXISTS customers (
     customer_id TEXT PRIMARY KEY,
+    
+    count INTEGER,
 
-    -- TODO: add every remaining column from your real inspected file
-    -- here, in the same order it appears in the CSV, with its mapped
-    -- SQL type. Don't skip any -- Salome's views (Issue #9) and
-    -- Latifah's model training (Issue #11) both read from whatever
-    -- ends up here, and a column missing here is a column neither of
-    -- them can use.
+    country TEXT,
 
-    churn_value INTEGER  -- placeholder so the file isn't empty --
-                          -- confirm this name/type against your real
-                          -- inspect output too.
+    state TEXT,
+
+    city TEXT,
+
+    zip_code INTEGER,
+
+    lat_long TEXT,
+
+    latitude REAL,
+
+    longitude REAL,
+
+    gender TEXT,
+
+    senior_citizen TEXT,
+
+    partner TEXT,
+
+    dependents TEXT,
+
+    tenure_months INTEGER,
+
+    phone_service TEXT,
+
+    multiple_lines TEXT,
+
+    internet_service TEXT,
+
+    online_security TEXT,
+
+    online_backup TEXT,
+
+    device_protection TEXT,
+
+    tech_support TEXT,
+
+    streaming_tv TEXT,
+
+    streaming_movies TEXT,
+
+    contract TEXT,
+
+    paperless_billing TEXT,
+
+    payment_method TEXT,
+
+    monthly_charges REAL,
+
+    total_charges REAL,
+
+    churn_label TEXT,
+
+    churn_value INTEGER,
+
+    churn_score INTEGER,
+
+    cltv INTEGER,
+
+    churn_reason TEXT
+
 );
 
--- TODO: if you identified any genuine one-to-many relationships in
--- step 2 above, add additional CREATE TABLE IF NOT EXISTS statements
--- here, each with a customer_id column that references
--- customers(customer_id).
+-- No additional tables were created.
+-- All inspected columns describe a single customer and belong
+-- directly to the customers table.

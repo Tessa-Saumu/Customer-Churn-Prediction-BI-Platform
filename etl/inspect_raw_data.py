@@ -33,18 +33,21 @@ logger = logging.getLogger(__name__)
 DATASET_PATH = "data/raw/telco_churn_raw.csv"
 
 
+from pathlib import Path
+
 def load_data(path: str) -> pd.DataFrame:
+
     file_path = Path(path)
+
+    print("Current working directory:", Path.cwd())
+    print("Looking for dataset at:", file_path.resolve())
 
     if not file_path.exists():
         raise FileNotFoundError(
             f"Dataset not found at: {file_path.resolve()}"
         )
 
-    df = pd.read_csv(file_path)
-    logger.info("Dataset loaded successfully. Rows loaded: %d", len(df))
-
-    return df
+    return pd.read_csv(file_path)
 
 
 def inspect_data(df: pd.DataFrame) -> None:

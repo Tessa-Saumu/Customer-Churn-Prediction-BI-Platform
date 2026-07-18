@@ -35,6 +35,10 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         .str.lower()
         .str.replace(" ", "_")
     )
+    # Rename customerid to customer_id so the cleaned dataset,
+    # database schema, and repository layer all use the same
+    # primary key naming convention.
+    df = df.rename(columns={"customerid": "customer_id"})
     logger.info("Column names standardized.")
 
     # Strip leading/trailing whitespace from all string columns.
@@ -76,9 +80,42 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # ------------------------------------------------------------------
     df["total_charges"] = pd.to_numeric(df["total_charges"], errors="coerce")
     logger.info("Converted total_charges to numeric.")
-    # <-- your fillna/decision for total_charges goes here, with a comment
-    #     explaining why, right above the line that implements it.
 
+    df["total_charges"] = pd.to_numeric(
+    df["total_charges"],
+    errors="coerce"
+    )
+    #Logging how many values become missing after conversion
+    null_count = df["total_charges"].isna().sum()
+    logger.info(
+    "Null values in total_charges after conversion: %d",
+    null_count
+    )
+    
+    # Inspect the affected rows to understand why total_charges is missing.
+    if null_count > 0:
+         logger.info(
+        "Rows with missing total_charges:\n%s",
+        df.loc[
+            df["total_charges"].isna(),
+            [
+                "customer_id",
+                "tenure_months",
+                "monthly_charges",
+                "contract",
+                "churn_label"
+            ]
+        ]
+    )
+
+    # Customers with zero months of tenure have not completed their first
+    # billing cycle. For these customers, a missing total_charges value
+    # represents zero accumulated charges rather than missing data.
+
+
+    df["total_charges"] = df["total_charges"].fillna(0)
+
+   
     # Churn reason is only applicable to customers who churned.
     df["churn_reason"] = df["churn_reason"].fillna("Not Applicable")
 
