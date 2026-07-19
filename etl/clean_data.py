@@ -1,21 +1,9 @@
 """
 Issue #8 -- ETL & Database -- etl/clean_data.py
 
-Owns this part of the spec (Project_Specification.md section 2.1):
-"etl/clean_data.py handles missing values with a documented strategy
-(code comment explaining the choice, not just the code)."
-
-Most of this is already correct and carried over from your original
-inspect_raw_data.py draft -- column standardization, whitespace
-stripping, and dedup all worked, so they're kept as-is. ONE thing is
-intentionally left for you below. Everything else is here so today's
-time goes toward that one decision instead of rebuilding what already
-worked.
-
-Downstream dependency: Latifah's model training (Issue #11) and
-etl/load_to_db.py both consume whatever this function returns. If the
-output's shape (column names, dtypes) changes, flag it -- don't let it
-change silently.
+total_charges handling and the customer_id rename below are Mercy's
+work, unchanged. This pass removes a duplicated conversion call,
+fixes indentation, and drops the "count" column to match schema.sql.
 """
 
 import logging
@@ -39,6 +27,12 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # database schema, and repository layer all use the same
     # primary key naming convention.
     df = df.rename(columns={"customerid": "customer_id"})
+
+    # "count" is a constant-1 utility column from the source Cognos
+    # export with no business meaning -- dropped to match schema.sql.
+    # Row counts belong in application code (len(df)), not stored
+    # per-row in the database.
+    df = df.drop(columns=["count"])
     logger.info("Column names standardized.")
 
     # Strip leading/trailing whitespace from all string columns.
@@ -55,67 +49,30 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     else:
         logger.info("No duplicate rows found.")
 
-    # --- TODO (yours to finish) -------------------------------------
-    # total_charges needs to become numeric, but this dataset is known
-    # to have some non-numeric values in that column for a specific
-    # category of customer. pd.to_numeric(..., errors="coerce") below
-    # will silently turn anything non-numeric into NaN -- converting it
-    # is necessary, but converting it is NOT the same as handling it. A
-    # coerced NaN is still a missing value once the conversion is done,
-    # and the spec requires missing values to be handled with a
-    # *documented* strategy, not just produced.
-    #
-    # Your job, in order:
-    #   1. Log the null count on total_charges right after the
-    #      conversion below -- is it actually zero, or not?
-    #   2. If it's not zero, look at which rows those are. Is there a
-    #      pattern? (Hint: check what else is true about those specific
-    #      customers.)
-    #   3. Decide what should happen to them -- there's a real,
-    #      defensible business reason certain customers would have $0
-    #      or no charges recorded yet, which is different from missing
-    #      data that should be imputed or dropped.
-    #   4. Write a comment here explaining the decision you made, same
-    #      as churn_reason is documented below.
-    # ------------------------------------------------------------------
+    # total_charges needs to become numeric -- some rows have
+    # non-numeric values here for a specific category of customer.
     df["total_charges"] = pd.to_numeric(df["total_charges"], errors="coerce")
     logger.info("Converted total_charges to numeric.")
 
-    df["total_charges"] = pd.to_numeric(
-    df["total_charges"],
-    errors="coerce"
-    )
-    #Logging how many values become missing after conversion
+    # Log how many values became missing after conversion.
     null_count = df["total_charges"].isna().sum()
-    logger.info(
-    "Null values in total_charges after conversion: %d",
-    null_count
-    )
-    
+    logger.info("Null values in total_charges after conversion: %d", null_count)
+
     # Inspect the affected rows to understand why total_charges is missing.
     if null_count > 0:
-         logger.info(
-        "Rows with missing total_charges:\n%s",
-        df.loc[
-            df["total_charges"].isna(),
-            [
-                "customer_id",
-                "tenure_months",
-                "monthly_charges",
-                "contract",
-                "churn_label"
-            ]
-        ]
-    )
+        logger.info(
+            "Rows with missing total_charges:\n%s",
+            df.loc[
+                df["total_charges"].isna(),
+                ["customer_id", "tenure_months", "monthly_charges", "contract", "churn_label"],
+            ],
+        )
 
     # Customers with zero months of tenure have not completed their first
     # billing cycle. For these customers, a missing total_charges value
     # represents zero accumulated charges rather than missing data.
-
-
     df["total_charges"] = df["total_charges"].fillna(0)
 
-   
     # Churn reason is only applicable to customers who churned.
     df["churn_reason"] = df["churn_reason"].fillna("Not Applicable")
 
@@ -132,10 +89,6 @@ if __name__ == "__main__":
     import sys
     from pathlib import Path as _Path
 
-    # Needed because the README runs files like this directly
-    # (`python3 etl/clean_data.py`), which only puts this file's own
-    # directory on sys.path -- without this, the sibling-package import
-    # just below would fail to resolve.
     _repo_root = _Path(__file__).resolve().parent.parent
     if str(_repo_root) not in sys.path:
         sys.path.insert(0, str(_repo_root))
