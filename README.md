@@ -409,3 +409,32 @@ If core milestones (M0–M6) finish ahead of schedule, the following are owned b
 - **No `print()`** — use the `logging` module for all runtime output.
 - **Tests required** for every feature — no hard coverage percentage target, but meaningful tests must exist and CI must pass.
 - Pragmatic code is preferred over strict SOLID/clean-architecture adherence — clarity and correctness first.
+
+## Data Dictionary and SQL Views
+
+The project includes supporting documentation and reusable SQL views to simplify business analysis and dashboard development.
+
+### Data Dictionary
+
+The data dictionary documents the customer dataset, including each field's business meaning, example values, and intended use in analytics.
+
+Location:
+
+```
+docs/data_dictionary.md
+```
+
+> **Note**
+>
+> The document is currently marked as **Pending Final Confirmation** until Issue #8 (SQLite schema) is merged into `main`.
+
+### SQL Views
+
+The following reusable SQL views are available.
+
+| View | Description |
+|------|-------------|
+| view_churn_by_contract | Churn metrics grouped by contract type |
+| view_churn_by_tenure_bucket | Churn metrics grouped by customer tenure |
+
+These views are designed for downstream reporting and Power BI dashboards.

@@ -91,75 +91,156 @@ GROUP BY "Churn Label";
 -- Business Question:
 -- Which services/features have the largest difference in churn rate between users and non-users?
 
+
 WITH feature_churn AS (
 
 SELECT
     'Online Security' AS feature,
 
-    AVG(
-        CASE
-            WHEN "Online Security"='Yes'
-            AND "Churn Label"='Yes'
-            THEN 1.0 ELSE 0
-        END
+    ROUND(
+        100.0 *
+        SUM(
+            CASE
+                WHEN "Online Security"='Yes'
+                 AND "Churn Label"='Yes'
+                THEN 1 ELSE 0
+            END
+        )
+        /
+        NULLIF(
+            SUM(
+                CASE
+                    WHEN "Online Security"='Yes'
+                    THEN 1 ELSE 0
+                END
+            ),
+            0
+        ),
+        2
     ) AS users_churn_rate,
 
-    AVG(
-        CASE
-            WHEN "Online Security"='No'
-            AND "Churn Label"='Yes'
-            THEN 1.0 ELSE 0
-        END
+    ROUND(
+        100.0 *
+        SUM(
+            CASE
+                WHEN "Online Security"='No'
+                 AND "Churn Label"='Yes'
+                THEN 1 ELSE 0
+            END
+        )
+        /
+        NULLIF(
+            SUM(
+                CASE
+                    WHEN "Online Security"='No'
+                    THEN 1 ELSE 0
+                END
+            ),
+            0
+        ),
+        2
     ) AS non_users_churn_rate
 
 FROM customer_churn
 
-
 UNION ALL
-
 
 SELECT
     'Tech Support',
 
-    AVG(
-        CASE
-            WHEN "Tech Support"='Yes'
-            AND "Churn Label"='Yes'
-            THEN 1.0 ELSE 0
-        END
+    ROUND(
+        100.0 *
+        SUM(
+            CASE
+                WHEN "Tech Support"='Yes'
+                 AND "Churn Label"='Yes'
+                THEN 1 ELSE 0
+            END
+        )
+        /
+        NULLIF(
+            SUM(
+                CASE
+                    WHEN "Tech Support"='Yes'
+                    THEN 1 ELSE 0
+                END
+            ),
+            0
+        ),
+        2
     ),
 
-    AVG(
-        CASE
-            WHEN "Tech Support"='No'
-            AND "Churn Label"='Yes'
-            THEN 1.0 ELSE 0
-        END
+    ROUND(
+        100.0 *
+        SUM(
+            CASE
+                WHEN "Tech Support"='No'
+                 AND "Churn Label"='Yes'
+                THEN 1 ELSE 0
+            END
+        )
+        /
+        NULLIF(
+            SUM(
+                CASE
+                    WHEN "Tech Support"='No'
+                    THEN 1 ELSE 0
+                END
+            ),
+            0
+        ),
+        2
     )
 
 FROM customer_churn
 
-
 UNION ALL
-
 
 SELECT
     'Online Backup',
 
-    AVG(
-        CASE
-            WHEN "Online Backup"='Yes'
-            AND "Churn Label"='Yes'
-            THEN 1.0 ELSE 0
-        END
+    ROUND(
+        100.0 *
+        SUM(
+            CASE
+                WHEN "Online Backup"='Yes'
+                 AND "Churn Label"='Yes'
+                THEN 1 ELSE 0
+            END
+        )
+        /
+        NULLIF(
+            SUM(
+                CASE
+                    WHEN "Online Backup"='Yes'
+                    THEN 1 ELSE 0
+                END
+            ),
+            0
+        ),
+        2
     ),
 
-    AVG(
-        CASE
-            WHEN "Online Backup"='No'
-            AND "Churn Label"='Yes'
-            THEN 1.0 ELSE 0
-        END
+    ROUND(
+        100.0 *
+        SUM(
+            CASE
+                WHEN "Online Backup"='No'
+                 AND "Churn Label"='Yes'
+                THEN 1 ELSE 0
+            END
+        )
+        /
+        NULLIF(
+            SUM(
+                CASE
+                    WHEN "Online Backup"='No'
+                    THEN 1 ELSE 0
+                END
+            ),
+            0
+        ),
+        2
     )
 
 FROM customer_churn
@@ -168,16 +249,13 @@ FROM customer_churn
 
 SELECT
 
-feature,
-
-ROUND(users_churn_rate * 100,2) AS users_churn_percentage,
-
-ROUND(non_users_churn_rate * 100,2) AS non_users_churn_percentage,
-
-ROUND(
-ABS(users_churn_rate - non_users_churn_rate) * 100,
-2
-) AS churn_difference
+    feature,
+    users_churn_rate AS users_churn_percentage,
+    non_users_churn_rate AS non_users_churn_percentage,
+    ROUND(
+        ABS(users_churn_rate - non_users_churn_rate),
+        2
+    ) AS churn_difference
 
 FROM feature_churn
 
