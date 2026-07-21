@@ -356,8 +356,8 @@ GitHub Projects board with these columns, in order:
 ### Run the ETL pipeline
 
 ```bash
-python3 database/init_db.py
-python3 etl/load_to_db.py
+python database/init_db.py
+python etl/load_to_db.py
 ```
 
 ### Run the API locally
