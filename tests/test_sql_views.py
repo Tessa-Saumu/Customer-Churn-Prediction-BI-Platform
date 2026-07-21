@@ -4,11 +4,13 @@ from pathlib import Path
 DATABASE_PATH = Path("database/churn.db")
 
 
-def get_connection():
+def get_connection() -> sqlite3.Connection:
+    """Return a connection to the SQLite database."""
     return sqlite3.connect(DATABASE_PATH)
 
 
-def test_view_churn_by_contract_exists():
+def test_view_churn_by_contract_exists() -> None:
+    """Verify the contract churn view exists."""
     conn = get_connection()
 
     cursor = conn.execute("""
@@ -23,7 +25,8 @@ def test_view_churn_by_contract_exists():
     conn.close()
 
 
-def test_view_churn_by_tenure_bucket_exists():
+def test_view_churn_by_tenure_bucket_exists() -> None:
+    """Verify the tenure bucket churn view exists."""
     conn = get_connection()
 
     cursor = conn.execute("""
@@ -38,7 +41,8 @@ def test_view_churn_by_tenure_bucket_exists():
     conn.close()
 
 
-def test_contract_view_returns_data():
+def test_contract_view_returns_data() -> None:
+    """Verify the contract churn view returns rows."""
     conn = get_connection()
 
     cursor = conn.execute("""
@@ -51,7 +55,8 @@ def test_contract_view_returns_data():
     conn.close()
 
 
-def test_tenure_view_returns_data():
+def test_tenure_view_returns_data() -> None:
+    """Verify the tenure bucket churn view returns rows."""
     conn = get_connection()
 
     cursor = conn.execute("""
@@ -64,7 +69,8 @@ def test_tenure_view_returns_data():
     conn.close()
 
 
-def test_contract_view_contains_expected_columns():
+def test_contract_view_contains_expected_columns() -> None:
+    """Verify the contract churn view exposes the expected columns."""
     conn = get_connection()
 
     cursor = conn.execute("""
@@ -76,7 +82,7 @@ def test_contract_view_contains_expected_columns():
     columns = [column[0] for column in cursor.description]
 
     expected = [
-        "Contract",
+        "contract",
         "total_customers",
         "churned_customers",
         "churn_rate_percentage",
@@ -87,7 +93,8 @@ def test_contract_view_contains_expected_columns():
     conn.close()
 
 
-def test_tenure_view_contains_expected_columns():
+def test_tenure_view_contains_expected_columns() -> None:
+    """Verify the tenure bucket churn view exposes the expected columns."""
     conn = get_connection()
 
     cursor = conn.execute("""

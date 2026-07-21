@@ -358,6 +358,7 @@ GitHub Projects board with these columns, in order:
 ```bash
 python database/init_db.py
 python etl/load_to_db.py
+python database/init_views.py
 ```
 
 ### Run the API locally
@@ -379,6 +380,16 @@ curl -H "X-API-Key: <your-key-from-.env>" http://localhost:8000/customers
 
 ```bash
 pytest
+```
+
+```bash
+python -m pytest tests/test_sql_views.py
+```
+
+or to run the full test suite:
+
+```bash
+python -m pytest
 ```
 
 ### Connect Power BI to the database
@@ -426,7 +437,7 @@ docs/data_dictionary.md
 
 > **Note**
 >
-> The document is currently marked as **Pending Final Confirmation** until Issue #8 (SQLite schema) is merged into `main`.
+> The data dictionary reflects the current SQLite schema (customers table) and should be updated if the schema changes in future revisions.
 
 ### SQL Views
 
@@ -438,3 +449,11 @@ The following reusable SQL views are available.
 | view_churn_by_tenure_bucket | Churn metrics grouped by customer tenure |
 
 These views are designed for downstream reporting and Power BI dashboards.
+
+These views are created by running:
+
+```bash
+python database/init_views.py
+```
+
+They are intended for reuse in Power BI dashboards and SQL analytics.

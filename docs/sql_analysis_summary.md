@@ -2,9 +2,9 @@
 
 ## Overview
 
-This document explains the SQL analytics queries and views created for Issue #9.
+This document summarizes the SQL analytics developed for **Issue #9** using the customer churn database created in **Issue #8**.
 
-The analysis is currently tested using the Telco customer churn dataset loaded into a temporary SQLite table called `customer_churn`.
+The analysis is based on the `customers` table in the SQLite database and includes exploratory SQL queries together with reusable analytical views for reporting and dashboard development.
 
 ---
 
@@ -13,56 +13,66 @@ The analysis is currently tested using the Telco customer churn dataset loaded i
 ## 1. Overall Churn Rate
 
 ### Business Question
+
 What percentage of customers have churned?
 
 ### Purpose
-Calculates the overall percentage of customers who left the service.
+
+Calculates the overall customer churn rate to establish a baseline retention metric.
 
 ---
 
 ## 2. Churn Rate by Contract Type
 
 ### Business Question
-How does churn differ across contract types?
+
+How does churn differ across customer contract types?
 
 ### Purpose
-Identifies whether customers with different contract commitments have different churn behavior.
+
+Measures churn across Month-to-month, One year, and Two year contracts to understand the relationship between contract length and customer retention.
 
 ---
 
 ## 3. Churn Rate by Tenure Bucket
 
 ### Business Question
+
 Which customer tenure group experiences the highest churn?
 
-### Groups
+### Tenure Buckets
 
-- 0–12 months
-- 13–36 months
-- 37+ months
+- 0–12 Months
+- 13–36 Months
+- 37+ Months
 
 ### Purpose
-Shows whether newer or longer-term customers are more likely to leave.
+
+Segments customers by tenure to identify which lifecycle stages are most vulnerable to churn.
 
 ---
 
 ## 4. Average Monthly Charges
 
 ### Business Question
+
 Do churned customers have different monthly charges compared with retained customers?
 
 ### Purpose
-Compares average monthly spending between churned and active customers.
+
+Compares average monthly charges for churned and retained customers to determine whether pricing is associated with customer attrition.
 
 ---
 
 ## 5. Feature Impact Analysis
 
 ### Business Question
-Which services have the largest churn difference between users and non-users?
+
+Which service features have the greatest difference in churn rates between users and non-users?
 
 ### Purpose
-Identifies services that may influence customer retention.
+
+Compares churn rates within customer subgroups using conditional aggregation to identify services associated with stronger customer retention.
 
 ---
 
@@ -70,34 +80,53 @@ Identifies services that may influence customer retention.
 
 ## view_churn_by_contract
 
-### Business Question
-What is the churn rate for each contract type?
-
 ### Purpose
-Provides Power BI with contract-level churn metrics.
+
+Provides reusable contract-level churn metrics for reporting tools such as Power BI and Tableau.
+
+### Metrics
+
+- Total customers
+- Churned customers
+- Churn rate (%)
 
 ---
 
 ## view_churn_by_tenure_bucket
 
-### Business Question
-How does churn vary by customer tenure?
-
 ### Purpose
-Provides Power BI with tenure-based churn segmentation.
+
+Provides reusable tenure-based churn metrics for dashboards and business reporting.
+
+### Metrics
+
+- Total customers
+- Churned customers
+- Churn rate (%)
 
 ---
 
-# Current Status
+# Validation
 
-Final SQL views will be updated after Mercy's SQLite schema is merged.
+The SQL queries and analytical views were validated against the SQLite database generated through the ETL pipeline developed in Issue #8.
 
-# Initial Findings From Local Testing
+Validation included:
 
-The SQL queries were tested using the Telco customer churn dataset loaded into an in-memory SQLite database.
+- Successful execution of all analytical queries
+- Successful creation of SQL views
+- Verification that analytical views return expected results
+- Validation of feature-impact calculations using subgroup-specific churn rates
 
-# Key observations:
+---
 
-- Overall churn rate is approximately **26.54%** of customers.
-- Month-to-month contracts represent the largest customer group with **3,875 customers**.
-- Churned customers have higher average monthly charges (**74.44**) compared with retained customers (**61.27**).
+# Initial Findings
+
+Initial analysis indicates:
+
+- Overall customer churn is approximately **26.5%**.
+- Month-to-month contracts experience the highest churn rates.
+- Customers with shorter tenure are more likely to churn.
+- Churned customers generally have higher monthly charges than retained customers.
+- Service features such as **Online Security**, **Tech Support**, and **Online Backup** are associated with lower churn rates among subscribers.
+
+> **Note:** Numerical results should be revalidated whenever the underlying dataset or ETL pipeline is updated.

@@ -1,76 +1,78 @@
 -- ==========================================================
--- Draft SQL Views
+-- SQL Views
 --
--- These views currently use the temporary table:
--- customer_churn
+-- Reusable analytical views for customer churn reporting.
 --
--- They must be updated after Mercy's final SQLite schema
--- is merged.
+-- These views depend on the customers table created in
+-- sql/schema.sql.
 -- ==========================================================
-
 
 -- Business Question:
 -- What is the churn rate by customer contract type?
 
-CREATE VIEW view_churn_by_contract AS
+CREATE VIEW IF NOT EXISTS view_churn_by_contract AS
 
 SELECT
+    contract,
 
-Contract,
+    COUNT(*) AS total_customers,
 
-COUNT(*) AS total_customers,
+    SUM(
+        CASE
+            WHEN churn_label = 'Yes' THEN 1
+            ELSE 0
+        END
+    ) AS churned_customers,
 
-SUM(
-CASE WHEN "Churn Label"='Yes'
-THEN 1 ELSE 0 END
-) AS churned_customers,
+    ROUND(
+        100.0 *
+        SUM(
+            CASE
+                WHEN churn_label = 'Yes' THEN 1
+                ELSE 0
+            END
+        ) / COUNT(*),
+        2
+    ) AS churn_rate_percentage
 
-ROUND(
-100.0 *
-SUM(CASE WHEN "Churn Label"='Yes' THEN 1 ELSE 0 END)
-/
-COUNT(*),
-2
-) AS churn_rate_percentage
+FROM customers
 
-FROM customer_churn
-
-GROUP BY Contract;
-
+GROUP BY contract;
 
 
 -- Business Question:
 -- What is the churn rate by customer tenure bucket?
 
-CREATE VIEW view_churn_by_tenure_bucket AS
+CREATE VIEW IF NOT EXISTS view_churn_by_tenure_bucket AS
 
 SELECT
 
-CASE
-    WHEN "Tenure Months" BETWEEN 0 AND 12 THEN '0-12 Months'
-    WHEN "Tenure Months" BETWEEN 13 AND 36 THEN '13-36 Months'
-    ELSE '37+ Months'
-END AS tenure_bucket,
+    CASE
+        WHEN tenure_months BETWEEN 0 AND 12 THEN '0-12 Months'
+        WHEN tenure_months BETWEEN 13 AND 36 THEN '13-36 Months'
+        ELSE '37+ Months'
+    END AS tenure_bucket,
 
+    COUNT(*) AS total_customers,
 
-COUNT(*) AS total_customers,
+    SUM(
+        CASE
+            WHEN churn_label = 'Yes' THEN 1
+            ELSE 0
+        END
+    ) AS churned_customers,
 
+    ROUND(
+        100.0 *
+        SUM(
+            CASE
+                WHEN churn_label = 'Yes' THEN 1
+                ELSE 0
+            END
+        ) / COUNT(*),
+        2
+    ) AS churn_rate_percentage
 
-SUM(
-CASE WHEN "Churn Label"='Yes'
-THEN 1 ELSE 0 END
-) AS churned_customers,
-
-
-ROUND(
-100.0 *
-SUM(CASE WHEN "Churn Label"='Yes' THEN 1 ELSE 0 END)
-/
-COUNT(*),
-2
-) AS churn_rate_percentage
-
-
-FROM customer_churn
+FROM customers
 
 GROUP BY tenure_bucket;
