@@ -42,8 +42,6 @@ database/*.sqlite3
 
 # --- Raw / large data (regenerate via ETL, don't commit) ---
 data/raw/*.csv
-data/raw/
-data/raw/*.xlsx
 !data/raw/.gitkeep
 
 # --- Testing ---
@@ -89,5 +87,3 @@ logs/
 
 # --- Models ---
 models/
-
-
