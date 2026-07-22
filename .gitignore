@@ -90,7 +90,4 @@ logs/
 # --- Models ---
 models/
 
-# --- Temporary local analysis scripts ---
-convert_dataset.py
-inspect_dataset.py
-test_sql_analysis.py
+
