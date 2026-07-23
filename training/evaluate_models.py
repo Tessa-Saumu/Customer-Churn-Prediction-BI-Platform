@@ -23,7 +23,7 @@ from training.train_models import train_models
 # Set up logging
 logger = logging.getLogger(__name__)
 # Model directory
-MODEL_PATH = Path("models")
+MODEL_PATH = REPO_ROOT / "models"
 MODEL_PATH.mkdir(parents=True, exist_ok=True)
 
 # Define a function to evaluate a single model
