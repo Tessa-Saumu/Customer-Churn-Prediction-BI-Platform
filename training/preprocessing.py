@@ -1,19 +1,14 @@
 import logging
 import sys
 from pathlib import Path
+import pandas as pd
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
-
-
-import pandas as pd
-from typing import Tuple
-import numpy as np
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
 
 from training.data_loader import load_training_data
 from training.feature_engineering import engineer_features
@@ -35,6 +30,7 @@ DROP_COLUMNS = [
     "churn_reason",
     "cltv",
 ]
+
 """
 Columns removed before training includes:
 
@@ -57,67 +53,42 @@ churn_label:
 """
 
 
-"""
-    Load, engineer and preprocess the customer churn dataset
-    for model training.
+def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     """
-def prepare_training_data() -> tuple[np.ndarray, pd.Series, Pipeline]:
-    
-    # Load training data from the SQLite database   
-    logger.info("Loading training data from SQLite database.")
-    df = load_training_data()
-
-    # Engineer features
-    logger.info("Applying engineered features.")
+        Apply the same feature engineering and column removal
+        used before both model training and prediction.
+    """
+    logger.info("Preparing model features....")
     df = engineer_features(df)
-
-    #Separating target
-    y = df["churn_value"]
-
-    #Separating features
-    X = df.drop(columns=DROP_COLUMNS + ["churn_value"])
-
-    # Define categorical features for one-hot encoding
-    categorical_columns = (
-    X.select_dtypes(include=["object", "category", "string"])
-    .columns
-    .tolist()
-)
-    
-    # Create a preprocessing pipeline for categorical features
-    preprocessor = ColumnTransformer(
-    transformers=[
-        (
-            "categorical",
-            OneHotEncoder(handle_unknown="ignore"),
-            categorical_columns,
-        ),
-    ],
-    remainder="passthrough",
+    df = df.drop(
+        columns=DROP_COLUMNS,
+        errors="ignore",
     )
+    logger.info("Prepared features with %d samples and %d features.", len(df), df.shape[1])
+    return df
 
-    logger.info(
-    "Prepared dataset with %d samples and %d features.",
-    len(X),
-    X.shape[1],
-)
+#Load the customer data and prepare the features and target variable for model training.
+def prepare_training_data() -> tuple[pd.DataFrame, pd.Series]:
+    
+    logger.info("Loading and preparing training data...")
+    df = load_training_data()
+    df = prepare_features(df)
+    y = df["churn_value"]
+    X = df.drop(columns=["churn_value"])
+    logger.info("Prepared dataset with %d samples and %d features.",len(X),X.shape[1],)
     return X, y
 
 
-"""
-    Build a preprocessing pipeline for the customer churn dataset.
-    Returns a sklearn Pipeline object that can be used to transform new data.
-    """
 def build_preprocessor(X: pd.DataFrame) -> ColumnTransformer:
+    """
+    Build the preprocessing transformer used during model training.
+    """
 
-    # Define categorical features for one-hot encoding
     categorical_columns = (
         X.select_dtypes(include=["object", "category", "string"])
         .columns
-        .tolist()
-    )
+        .tolist())
 
-    # Create a preprocessing pipeline for categorical features
     preprocessor = ColumnTransformer(
         transformers=[
             (
@@ -129,14 +100,10 @@ def build_preprocessor(X: pd.DataFrame) -> ColumnTransformer:
         remainder="passthrough",
     )
 
-    logger.info(
-        "Built preprocessor with %d features.",
-        X.shape[1],
-    )
-    
+    logger.info("Built preprocessor with %d features.", X.shape[1])
+
     return preprocessor
 
-    
 
 # To check if this script is running directly, executing the data preparation function and printing the results
 if __name__ == "__main__":

@@ -9,7 +9,6 @@ fastapi
 uvicorn[standard]
 python-dotenv
 sqlalchemy
-
 pytest
 httpx
 tabulate

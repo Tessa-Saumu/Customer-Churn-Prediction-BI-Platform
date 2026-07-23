@@ -23,8 +23,8 @@ from training.train_models import train_models
 # Set up logging
 logger = logging.getLogger(__name__)
 # Model directory
-MODEL_DIR = Path("models")
-MODEL_DIR.mkdir(parents=True, exist_ok=True)
+MODEL_PATH = Path("models")
+MODEL_PATH.mkdir(parents=True, exist_ok=True)
 
 # Define a function to evaluate a single model
 def evaluate_model(
@@ -98,7 +98,7 @@ def evaluate_all_models() -> pd.DataFrame:
     # save model
     joblib.dump(
     best_model,
-    MODEL_DIR / "best_model.pkl",
+    MODEL_PATH / "best_model.pkl",
     )
 
     logger.info(
