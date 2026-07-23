@@ -2,13 +2,14 @@
 Issue #10 -- FastAPI Scaffold -- app/api/routes.py
 
 All 5 endpoints are implemented. /health and /predict return real
-(mocked, for /predict) responses. /customers, /kpis, and
-/model-metrics return placeholder data on purpose: Mercy's
-CustomerRepository (#8) and Salome's SQL views (#9) are not yet
-merged, and the issue explicitly allows a temporary mock matching the
-expected interface in that situation. Each placeholder is flagged in
-PR #10's Notes section per spec, and each function's docstring/comment
-notes what should replace it once the relevant dependency merges.
+(mocked, for /predict) responses. /customers and /kpis return
+placeholder data by deliberate scope decision, not because #8/#9 are
+unmerged -- both merged during this sprint. Per spec section 2.3, the
+real swap belongs to Issue #14 (real integration), reviewed as its own
+unit rather than folded silently into this PR. See Tessa's review note
+on Issue #10 for the explicit call. Each placeholder is flagged in PR
+#10's Notes section, and each function's comment notes what should
+replace it when #14 happens.
 """
 
 import logging
@@ -32,13 +33,15 @@ def health() -> dict[str, str]:
 
 @router.get("/customers", dependencies=[Depends(verify_api_key)])
 def get_customers() -> list[dict[str, Any]]:
-    # PLACEHOLDER (Issue #10): Mercy's CustomerRepository (#8) is not
-    # yet merged. The two records below are temporary mock data, in
-    # the same shape CustomerRepository.get_all() will return --
-    # list[dict[str, Any]] -- so the swap below is a drop-in
-    # replacement, not a rewrite. Flagged in PR #10's Notes section.
+    # PLACEHOLDER (Issue #10, kept by deliberate scope decision):
+    # CustomerRepository (#8) IS merged as of this comment, but the
+    # swap to real data is explicitly Issue #14's job, not folded in
+    # here -- see spec section 2.3 and Tessa's Issue #10 review note.
+    # Two records below are temporary mock data, same shape
+    # CustomerRepository.get_all() returns -- list[dict[str, Any]].
+    # Flagged in PR #10's Notes section.
     #
-    # Once #8 merges, replace this whole function body with:
+    # Issue #14: replace this whole function body with:
     #     from app.repository.customer_repository import CustomerRepository
     #     return CustomerRepository().get_all()
     logger.info("get_customers called (temporary mock -- Issue #8 not yet merged)")      
@@ -63,13 +66,17 @@ def get_customers() -> list[dict[str, Any]]:
 
 @router.get("/kpis", dependencies=[Depends(verify_api_key)])
 def get_kpis() -> dict[str, Any]:
-    # PLACEHOLDER (Issue #10): Salome's SQL views (#9) are not yet
-    # merged, so the KPI values below are temporary mock data rather
-    # than a live query. Shape (churn rate, avg monthly charges,
-    # customer count, etc.) was chosen to match what Joyce's
-    # dashboard work is likely to expect. Flagged in PR #10's Notes
-    # section. Once #9 merges, replace this with a query against the
-    # relevant view(s) in sql/views.sql.
+    # PLACEHOLDER (Issue #10, kept by deliberate scope decision):
+    # Salome's SQL views (#9) ARE merged as of this comment, but the
+    # swap to a live query is explicitly Issue #14's job, not folded
+    # in here -- see spec section 2.3 and Tessa's Issue #10 review
+    # note. Values below are temporary mock data. Shape (churn rate,
+    # avg monthly charges, customer count, etc.) was chosen to match
+    # what Joyce's dashboard work is likely to expect. Flagged in PR
+    # #10's Notes section.
+    #
+    # Issue #14: replace this with a query against the relevant
+    # view(s) in sql/views.sql.
     logger.info("get_kpis called (temporary mock -- Issue #9 not yet merged)")
 
     return {
