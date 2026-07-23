@@ -48,8 +48,24 @@ def get_customers() -> list[dict[str, Any]]:
     #
     # Don't forget: flag this placeholder explicitly in your PR's
     # Notes section before it goes up.
-    logger.info("get_customers called (temporary mock -- Issue #8 not yet merged)")
-    raise NotImplementedError("TODO: return a temporary mock list of customer dicts")
+    logger.info("get_customers called (temporary mock -- Issue #8 not yet merged)")      
+
+    return [
+    {
+        "customerID": "C001",
+        "gender": "Male",
+        "tenure": 24,
+        "MonthlyCharges": 234.00,
+        "Churn": "Yes",
+    },
+    {
+        "customerID": "C002",
+        "gender": "Female",
+        "tenure": 12,
+        "MonthlyCharges": 120.50,
+        "Churn": "No",
+    },
+    ]
 
 
 @router.get("/kpis", dependencies=[Depends(verify_api_key)])
@@ -63,8 +79,15 @@ def get_kpis() -> dict[str, Any]:
     # Same reminder: flag this placeholder explicitly in your PR's
     # Notes section.
     logger.info("get_kpis called (temporary mock -- Issue #9 not yet merged)")
-    raise NotImplementedError("TODO: return a temporary mock KPI dict")
-
+    
+    return 
+    {
+    "customer_count": 7043,
+    "overall_churn_rate": 26.5,
+    "retention_rate": 73.5,
+    "average_monthly_charges": 64.76,
+    "total_monthly_revenue": 456321.87,
+    }
 
 @router.post("/predict", response_model=CustomerPredictionResponse, dependencies=[Depends(verify_api_key)])
 def predict(request: CustomerPredictionRequest) -> CustomerPredictionResponse:
@@ -81,4 +104,10 @@ def get_model_metrics() -> dict[str, float]:
     # the exact values genuinely don't matter yet since these are
     # explicitly placeholders, just make sure all four keys are there.
     logger.info("get_model_metrics called (placeholder metrics)")
-    raise NotImplementedError("TODO: return placeholder accuracy/precision/recall/roc_auc")
+    
+    return {
+    "accuracy": 0.89,
+    "precision": 0.86,
+    "recall": 0.81,
+    "roc_auc": 0.91,
+    }
