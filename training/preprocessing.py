@@ -29,6 +29,7 @@ DROP_COLUMNS = [
     "churn_label",
     "churn_reason",
     "cltv",
+    "churn_score",
 ]
 
 """
@@ -46,6 +47,20 @@ churn_label:
 
 - churn_reason:
     Known only after churn occurs, so using it would leak future information.
+
+- churn_score:
+    IBM Cognos-computed churn risk score, derived from the churn
+    outcome itself -- same leakage reasoning as churn_reason and cltv.
+    A real customer being scored through /predict has no
+    Cognos-generated churn_score yet, so the model can never receive
+    this at real prediction time; training on it teaches the model to
+    lean on a signal that structurally doesn't exist outside this
+    dataset. Flagged during Issue #14 integration testing: the
+    ColumnTransformer, fit with churn_score present, rejected any
+    real single-record prediction request with
+    "ValueError: columns are missing: {'churn_score'}" -- confirming
+    this was missing from the original leakage-column review, not an
+    intentional inclusion.
 
 - cltv:
     Customer Lifetime Value is calculated using business rules that
