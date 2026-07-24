@@ -394,13 +394,23 @@ python database/init_views.py
 uvicorn app.main:app --reload
 ```
 
-Then verify:
+Then, in a separate terminal, verify all 5 endpoints:
+
+**macOS / Linux:**
+```bash
+API_KEY=<your-key-from-.env> ./verify_endpoints.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+$env:API_KEY="<your-key-from-.env>"; ./verify_endpoints.ps1
+```
+
+Both scripts check `/health` (no auth), `/customers`, `/kpis`, `/model-metrics`, and `/predict` (with and without the API key where relevant) and print a pass/fail summary. A single manual spot-check, if you want one:
 
 ```bash
 curl http://localhost:8000/health
 # {"status": "ok"}
-
-curl -H "X-API-Key: <your-key-from-.env>" http://localhost:8000/customers
 ```
 
 ### Run tests
