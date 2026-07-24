@@ -42,6 +42,7 @@ Everything else in this file is untouched from Issue #11's original.
 import os
 from pathlib import Path
 from typing import Any
+from dotenv import load_dotenv
 
 import sys
 import joblib
@@ -53,6 +54,8 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from training.preprocessing import prepare_features
+
+load_dotenv()
 
 # CHANGED (Issue #14): configurable via MODEL_PATH env var, default
 # unchanged from Issue #11.
