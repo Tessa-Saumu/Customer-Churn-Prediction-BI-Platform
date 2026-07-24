@@ -385,6 +385,7 @@ This command will:
 ```bash
 python database/init_db.py
 python etl/load_to_db.py
+python database/init_views.py
 ```
 
 ### Run the API locally
@@ -406,6 +407,16 @@ curl -H "X-API-Key: <your-key-from-.env>" http://localhost:8000/customers
 
 ```bash
 pytest
+```
+
+```bash
+python -m pytest tests/test_sql_views.py
+```
+
+or to run the full test suite:
+
+```bash
+python -m pytest
 ```
 
 ### Connect Power BI to the database
@@ -436,3 +447,40 @@ If core milestones (M0–M6) finish ahead of schedule, the following are owned b
 - **No `print()`** — use the `logging` module for all runtime output.
 - **Tests required** for every feature — no hard coverage percentage target, but meaningful tests must exist and CI must pass.
 - Pragmatic code is preferred over strict SOLID/clean-architecture adherence — clarity and correctness first.
+
+## Data Dictionary and SQL Views
+
+The project includes supporting documentation and reusable SQL views to simplify business analysis and dashboard development.
+
+### Data Dictionary
+
+The data dictionary documents the customer dataset, including each field's business meaning, example values, and intended use in analytics.
+
+Location:
+
+```
+docs/data_dictionary.md
+```
+
+> **Note**
+>
+> The data dictionary reflects the current SQLite schema (customers table) and should be updated if the schema changes in future revisions.
+
+### SQL Views
+
+The following reusable SQL views are available.
+
+| View | Description |
+|------|-------------|
+| view_churn_by_contract | Churn metrics grouped by contract type |
+| view_churn_by_tenure_bucket | Churn metrics grouped by customer tenure |
+
+These views are designed for downstream reporting and Power BI dashboards.
+
+These views are created by running:
+
+```bash
+python database/init_views.py
+```
+
+They are intended for reuse in Power BI dashboards and SQL analytics.
