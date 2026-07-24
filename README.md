@@ -352,6 +352,33 @@ GitHub Projects board with these columns, in order:
 ---
 
 ## Running the Project
+This section demonstrates how to run the project;the set of instructions are given in the following sections below:
+### Run the machine learning training pipeline
+
+After the ETL pipeline has loaded the customer data into the database, install the project dependencies (if you have not already done so):
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the complete model training and evaluation pipeline:
+
+```bash
+python training/evaluate_models.py
+```
+
+This command will:
+
+- Train all five machine learning models:
+  - Logistic Regression
+  - Decision Tree
+  - Random Forest
+  - XGBoost
+  - LightGBM
+- Evaluate each model using Accuracy, Precision, Recall, ROC AUC, and a Confusion Matrix.
+- Select the best-performing model based on the evaluation metrics.
+- Save the selected model to `models/best_model.pkl`.
+- Generate the evaluation report at `evaluation/model_comparison.md`.
 
 ### Run the ETL pipeline
 
