@@ -429,12 +429,74 @@ or to run the full test suite:
 python -m pytest
 ```
 
-### Connect Power BI to the database
+## Power BI Dashboard Setup
 
-1. Install a SQLite ODBC driver locally.
-2. Configure an ODBC DSN pointing at `database/churn.db`.
-3. In Power BI Desktop, connect using **Get Data → ODBC** and select the configured DSN.
-4. Confirm the tables/views (including Salome's named views in `sql/views.sql`) are visible before building dashboard pages.
+This section documents how to set up, open, and refresh `dashboard/churn_dashboard.pbix` locally.
+
+### Prerequisites
+
+Before opening the dashboard, the database must be initialized and populated:
+
+```bash
+python database/init_db.py
+python etl/load_to_db.py
+python database/init_views.py
+```
+
+Confirm the ETL completed successfully — you should see all rows from the raw dataset (7,043 for the current dataset) inserted into `database/churn.db`.
+
+### 1. Install a SQLite ODBC driver
+
+Install the **SQLite3 ODBC Driver (64-bit)** on your machine. This is the driver version validated against this dashboard:
+
+- Driver: SQLite3 ODBC Driver
+- Version: 1.34455.00.00 (64-bit)
+
+Installation source and steps will depend on your OS — search for "SQLite ODBC Driver 64-bit" from a trusted driver provider (e.g. ch-werner.de/sqliteodbc) and follow the installer for your platform.
+
+### 2. Configure an ODBC DSN
+
+Create a **System DSN** pointing at your local `database/churn.db` file. Name the DSN `ChurnDB` (the dashboard's data source expects this name).
+
+Steps (Windows):
+1. Open **ODBC Data Sources (64-bit)** from Windows search.
+2. Go to the **System DSN** tab → **Add**.
+3. Select the SQLite3 ODBC Driver.
+4. Set the DSN name to `ChurnDB` and point the database path at your local `database/churn.db`.
+5. Save.
+
+> Do not commit your local DSN configuration or any absolute file paths — these are machine-specific and are already excluded via `.gitignore`.
+
+### 3. Set the ProjectPath parameter
+
+The Model Predictions page reads `evaluation/model_comparison.csv` via a Power Query parameter called `ProjectPath`, so each person needs to point it at their own local copy of the repo before refreshing:
+
+1. Open `dashboard/churn_dashboard.pbix` in Power BI Desktop.
+2. Go to **Transform Data → Edit Parameters**.
+3. Set `ProjectPath` to the full local path of your cloned repo folder. **Do not end the path with a trailing `/` or `\`.**
+4. Click **OK**, then refresh (see step 5 below).
+
+This is a one-time local setup step, same as the DSN above — it is not committed with any specific person's path baked in.
+
+### 4. Connect Power BI to the DSN
+
+1. If prompted for a data source, go to **Get Data → ODBC** and select the `ChurnDB` DSN.
+2. Confirm the following objects are visible and queryable:
+   - `customers`
+   - `view_churn_by_contract`
+   - `view_churn_by_tenure_bucket`
+3. If visuals appear empty after connecting, use **Refresh** (Home tab → Refresh) to force Power BI to re-query the live ODBC connection.
+
+### 5. Refreshing the dashboard
+
+Whenever the underlying data changes (new ETL run, updated views, or a new model evaluation in `evaluation/model_comparison.md`):
+
+1. Re-run the relevant pipeline step (ETL, views, or model evaluation/CSV regeneration — see `evaluation/generate_model_comparison_csv.py`).
+2. Open `dashboard/churn_dashboard.pbix` in Power BI Desktop.
+3. Click **Refresh** on the Home tab to pull the latest data through the live ODBC connection.
+4. Save the file.
+
+No credentials or machine-specific paths (e.g. absolute local file paths, usernames) should ever be committed alongside the `.pbix` file. The DSN name (`ChurnDB`) and the `ProjectPath` parameter are the only environment-specific details the dashboard depends on, and both must be set locally by each team member following the steps above.
 
 ---
 
