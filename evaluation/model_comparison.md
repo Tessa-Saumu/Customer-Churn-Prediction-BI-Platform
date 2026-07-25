@@ -1,25 +1,25 @@
 # Customer Churn Model Comparison
 
-| model_name          |   accuracy |   precision |   recall |   roc_auc | confusion_matrix       |
-|:--------------------|-----------:|------------:|---------:|----------:|:-----------------------|
-| Logistic Regression |   0.917672 |    0.837696 | 0.855615 |  0.974275 | [[973, 62], [54, 320]] |
-| Decision Tree       |   0.908446 |    0.819843 | 0.839572 |  0.886453 | [[966, 69], [60, 314]] |
-| Random Forest       |   0.927608 |    0.867568 | 0.858289 |  0.966707 | [[986, 49], [53, 321]] |
-| XGBoost             |   0.92335  |    0.853723 | 0.858289 |  0.979212 | [[980, 55], [53, 321]] |
-| LightGBM            |   0.930447 |    0.863158 | 0.877005 |  0.981767 | [[983, 52], [46, 328]] |
+| model_name          |   accuracy |   precision |   recall |   roc_auc | confusion_matrix         |
+|:--------------------|-----------:|------------:|---------:|----------:|:-------------------------|
+| Logistic Regression |   0.801987 |    0.647975 | 0.55615  |  0.849448 | [[922, 113], [166, 208]] |
+| Decision Tree       |   0.731725 |    0.494737 | 0.502674 |  0.658343 | [[843, 192], [186, 188]] |
+| Random Forest       |   0.789212 |    0.622222 | 0.524064 |  0.833522 | [[916, 119], [178, 196]] |
+| XGBoost             |   0.790632 |    0.620061 | 0.545455 |  0.828214 | [[910, 125], [170, 204]] |
+| LightGBM            |   0.805536 |    0.658228 | 0.55615  |  0.848423 | [[927, 108], [166, 208]] |
 
 ## Selected Model
 
-**LightGBM**
+**Logistic Regression**
 
 ### Performance
 
-- Accuracy: 0.9304
-- Precision: 0.8632
-- Recall: 0.8770
-- ROC AUC: 0.9818
-- Confusion Matrix: [[983, 52], [46, 328]]
+- Accuracy: 0.8020
+- Precision: 0.6480
+- Recall: 0.5561
+- ROC AUC: 0.8494
+- Confusion Matrix: [[922, 113], [166, 208]]
 
 ## Why this model was selected
 
-LightGBM was selected because it achieved the highest ROC AUC (0.9818), which was the primary model selection criterion. It also demonstrated strong overall performance across accuracy, precision, and recall, making it the best balance of predictive performance among the evaluated models.
+Logistic Regression was selected because it achieved the highest ROC AUC (0.8494), which was the primary model selection criterion. It also demonstrated strong overall performance across accuracy, precision, and recall, making it the best balance of predictive performance among the evaluated models.
