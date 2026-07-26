@@ -1,7 +1,7 @@
 # QA Findings
 
 This document is maintained across three testing issues: **Issue #13**
-(ETL & Database), **Issue #16** (FastAPI), and **Issue #19** (Model
+(ETL & Database), **Issue #16** (FastAPI), and **Issue #17** (Model
 Training & Prediction). Each finding below was reproduced directly
 against the real codebase during test authorship -- not inferred from
 reading code alone -- and each is backed by a corresponding test in
@@ -17,7 +17,7 @@ section(s) below that PR is responsible for -- reviewers should check
 the PR description, not assume every section in this file was authored
 by that specific branch. Section ownership: `## Issue #13` is
 authored on `theresia/etl-tests`; `## Issue #16` and
-`## Cross-Cutting` are authored on `theresia/api-tests`; `## Issue #19`
+`## Cross-Cutting` are authored on `theresia/api-tests`; `## Issue #17`
 is authored on `theresia/model-tests`.
 
 None of these were fixed as part of writing the test suites, per each
@@ -161,7 +161,7 @@ with a valid prediction, and that `SeniorCitizen=5`, negative
 
 ---
 
-## Issue #19 -- Model Training & Prediction
+## Issue #17 -- Model Training & Prediction
 
 ### Finding 6: `add_tenure_bucket()` has an open top bin -- `tenure_months > 72` silently becomes `NaN`
 
@@ -197,7 +197,7 @@ during this issue's testing; not separately unit-tested in
 `tests/test_models.py` because it is exercised indirectly by every
 `predict()` call using realistic tenure values (0-72), which is the
 full range currently possible in production. Flagging in this document
-per Issue #13/#19's "document rather than silently patch" instruction,
+per Issue #13/#17's "document rather than silently patch" instruction,
 since `training/feature_engineering.py` belongs to Latifah's `training/`
 ownership, not Pamela's test-authoring scope.
 
@@ -223,7 +223,7 @@ payload2["tenure"] = None
 predict(payload2)  # raises TypeError: '<' not supported between instances of 'NoneType' and 'NoneType'
 ```
 
-**Expected behaviour:** Per Issue #19's acceptance criteria, a
+**Expected behaviour:** Per Issue #17's acceptance criteria, a
 customer record with missing or null fields should either raise a
 clear validation error, or be handled per a documented strategy.
 
@@ -346,7 +346,7 @@ issue -- they surfaced as `pytest` warnings only after running all
 three suites together with `pytest.ini` correctly in place, and each
 touches a file owned outside the three testing issues (Finding 10:
 `app/schemas/`, jointly Praise/Theresia; Finding 11: `etl/`, Mercy's).
-Kept as their own section rather than folded into #13/#16/#19 above so
+Kept as their own section rather than folded into #13/#16/#17 above so
 it's clear neither is a `test_etl.py`/`test_api.py`/`test_models.py`
 authorship finding -- both are dependency-version/deprecation findings
 about the underlying implementation files.
