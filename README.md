@@ -70,6 +70,11 @@ cp .env.example .env
 
 See `.env.example` for the full list of required variables (API key, database path, etc.). **Never commit `.env`** — it's already listed in `.gitignore`.
 
+As of Issue #14 (real model integration), two additional variables are supported. Both are optional -- if unset, they default to the repo-standard paths (models/best_model.pkl and evaluation/model_comparison.md), so no .env change is required to run the project as before. Set them only if your model artifacts live somewhere other than the repo root (e.g. a container image that copies only app/, predict.py, and models/):
+
+MODEL_PATH=models/best_model.pkl
+MODEL_METRICS_PATH=evaluation/model_comparison.md
+
 ---
 
 ## Git Workflow
@@ -390,7 +395,26 @@ python database/init_views.py
 
 ### Run the API locally
 
+Before running the API (as of Issue #14): /predict and /model-metrics now call real artifacts instead of placeholders, so both must exist first:
+
+models/best_model.pkl — produced by training/evaluate_models.py (see Run the machine learning training pipeline above). /predict will fail to start if this file is missing.
+evaluation/model_comparison.md — also produced by training/evaluate_models.py. /model-metrics returns a 500 with a clear error message if this file is missing, rather than failing silently or falling back to placeholder numbers.
+
+/customers and /kpis require the database to be initialized and populated first — i.e. the Run the ETL pipeline steps must have already been completed at least once.
+
+In short, as of Issue #14 the full local startup order is:
+
 ```bash
+# 1. ETL — populates database/churn.db
+python database/init_db.py
+python etl/load_to_db.py
+python database/init_views.py
+
+# 2. Training — populates models/best_model.pkl and
+#    evaluation/model_comparison.md
+python training/evaluate_models.py
+
+# 3. API — now backed entirely by real data/model from steps 1-2
 uvicorn app.main:app --reload
 ```
 
