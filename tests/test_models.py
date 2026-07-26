@@ -1,5 +1,5 @@
 """
-Issue #19 -- Model Training & Prediction Testing -- tests/test_models.py
+Issue #17 -- Model Training & Prediction Testing -- tests/test_models.py
 
 Owner: Pamela's deliverable per Project_Specification.md section 2.6 --
 authored entirely from scratch, no content carried over from
@@ -158,7 +158,7 @@ def _valid_prediction_payload() -> dict:
 @requires_model_artifact
 class TestModelArtifactLoading:
     """
-    Issue #19 explicit requirement: models/best_model.pkl (or
+    Issue #17 explicit requirement: models/best_model.pkl (or
     equivalent) loads without error, and required preprocessing
     artifacts (encoders/scalers/transformers) load successfully too.
     """
@@ -219,7 +219,7 @@ class TestModelArtifactLoading:
 @requires_model_artifact
 class TestPredictBaselineCorrectness:
     """
-    Issue #19 explicit requirement: predict() executes successfully
+    Issue #17 explicit requirement: predict() executes successfully
     on a valid sample and returns the exact expected shape.
     """
 
@@ -269,7 +269,7 @@ class TestPredictBaselineCorrectness:
 @requires_model_artifact
 class TestPredictEdgeCases:
     """
-    Issue #19 explicit requirement: unseen category values and
+    Issue #17 explicit requirement: unseen category values and
     missing/null fields.
     """
 
@@ -365,7 +365,7 @@ class TestPredictEdgeCases:
 @requires_model_artifact
 class TestPreprocessingPathConsistency:
     """
-    Issue #19 explicit requirement: the prediction pipeline uses the
+    Issue #17 explicit requirement: the prediction pipeline uses the
     same preprocessing path as training -- input transformation works
     before inference, and feature ordering matches what the trained
     model expects.
@@ -567,7 +567,7 @@ class TestTrainingPipelineEndToEnd:
 @requires_populated_db
 class TestTrainingAndEvaluationLoggingCoverage:
     """
-    Issue #19 explicit requirement: confirm meaningful logs exist for
+    Issue #17 explicit requirement: confirm meaningful logs exist for
     training progress, evaluation results, and model selection.
     """
 
