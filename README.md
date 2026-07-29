@@ -275,6 +275,16 @@ Power BI Dashboard (connected via ODBC)
 
 Five models are trained and compared: **Logistic Regression, Decision Tree, Random Forest, XGBoost, LightGBM.** Evaluation metrics: Accuracy, Precision, Recall, ROC AUC, Confusion Matrix. Best model is selected and used for the `/predict` endpoint.
 
+### Feature Engineering
+
+Before model training, the preprocessing pipeline generates three derived features:
+
+- **TenureBucket** – Groups customers into tenure ranges (0–12, 13–24, 25–48 and 49+ months).
+- **TotalServicesCount** – Counts the number of subscribed services for each customer.
+- **AvgMonthlySpend** – Calculates the customer's average monthly spend using total charges and tenure.
+
+These engineered features are created dynamically during preprocessing and are not stored in the SQLite database.
+
 ### API Endpoints
 
 All endpoints require an `X-API-Key` header except `/health`.

@@ -119,9 +119,9 @@ Validation included:
 
 ---
 
-# Initial Findings
+# Key Findings
 
-Initial analysis indicates:
+The final SQL analysis indicates:
 
 - Overall customer churn is approximately **26.5%**.
 - Month-to-month contracts experience the highest churn rates.
