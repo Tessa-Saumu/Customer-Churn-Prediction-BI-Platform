@@ -1,7 +1,7 @@
 """
 Issue #17 -- Model Training & Prediction Testing -- tests/test_models.py
 
-Owner: Pamela's deliverable per Project_Specification.md section 2.6 --
+Owner: Theresia --
 authored entirely from scratch, no content carried over from
 Latifah's (#11) implementation.
 
