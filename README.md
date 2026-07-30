@@ -165,8 +165,8 @@ All endpoints require an `X-API-Key` header except `/health`.
 | `/predict`       | POST   | Returns a churn prediction for a given customer |
 | `/model-metrics` | GET    | Returns the best model's evaluation metrics     |
 
-> Full request/response examples for all 5 endpoints are documented in [`docs/api_examples.md`](docs/api_examples.md).
 
+> Full request/response examples for all 5 endpoints are documented in [`docs/api_examples.md`](docs/api_examples.md).
 ---
 
 ## Team & Responsibilities
