@@ -9,7 +9,7 @@ All endpoints except `/health` require API key authentication.
 Include the following header in authenticated requests:
 
 ```http
-Authorization: Bearer $API_KEY
+X-API-Key: $API_KEY
 ```
 
 Replace `$API_KEY` with your configured API key.
@@ -44,7 +44,7 @@ Returns customer records from the SQLite database.
 
 ```bash
 curl -X GET http://localhost:8000/customers \
-  -H "Authorization: Bearer $API_KEY"
+  -H "X-API-Key: $API_KEY"
 ```
 
 ### Example Response
@@ -77,7 +77,7 @@ Returns executive KPI metrics computed from the current customer data.
 
 ```bash
 curl -X GET http://localhost:8000/kpis \
-  -H "Authorization: Bearer $API_KEY"
+  -H "X-API-Key: $API_KEY"
 ```
 
 ### Example Response
@@ -104,7 +104,7 @@ Generates a churn prediction using the trained machine learning model.
 
 ```bash
 curl -X POST http://localhost:8000/predict \
-  -H "Authorization: Bearer $API_KEY" \
+  -H "X-API-Key: $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "gender": "Female",
@@ -156,7 +156,7 @@ Returns evaluation metrics for the trained machine learning model.
 
 ```bash
 curl -X GET http://localhost:8000/model-metrics \
-  -H "Authorization: Bearer $API_KEY"
+  -H "X-API-Key: $API_KEY"
 ```
 
 ### Example Response
@@ -185,16 +185,16 @@ curl -X GET http://localhost:8000/model-metrics \
 | Endpoint | Method | Authentication | Description |
 |----------|--------|----------------|-------------|
 | `/health` | GET | No | Returns API health status. |
-| `/customers` | GET | Yes | Returns customer records from the SQLite database. |
-| `/kpis` | GET | Yes | Returns executive KPI metrics computed from customer data. |
-| `/predict` | POST | Yes | Predicts customer churn using the trained machine learning model. |
-| `/model-metrics` | GET | Yes | Returns evaluation metrics for the trained model. |
+| `/customers` | GET | Yes (`X-API-Key`) | Returns customer records from the SQLite database. |
+| `/kpis` | GET | Yes (`X-API-Key`) | Returns executive KPI metrics computed from customer data. |
+| `/predict` | POST | Yes (`X-API-Key`) | Predicts customer churn using the trained machine learning model. |
+| `/model-metrics` | GET | Yes (`X-API-Key`) | Returns evaluation metrics for the trained model. |
 
 ## Notes
 
-- All authenticated endpoints require an API key supplied in the `Authorization` header.
+- All authenticated endpoints require an API key supplied in the `X-API-Key` request header.
 - The `/predict` endpoint accepts the `CustomerPredictionRequest` schema defined in `app/schemas/customer_schema.py`.
 - The `/predict` endpoint returns the `CustomerPredictionResponse` schema containing:
   - `churn_probability` (float)
   - `churn_prediction` (boolean)
-- Example values in this document are for demonstration purposes. Actual values depend on the current database contents and trained machine learning model.
+- Example values in this document are provided for demonstration purposes. Actual values depend on the current database contents and trained machine learning model.
