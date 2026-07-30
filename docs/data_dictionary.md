@@ -63,7 +63,7 @@ The following features are created dynamically during the machine learning pipel
 
 | Feature | Derived From | Description | Purpose |
 |---------|--------------|-------------|---------|
-| TenureBucket | tenure_months | Groups customers into four tenure ranges (0–12, 13–24, 25–48 and 49-72 months). Values greater than 72 months are not assigned to a bucket and currently become `NaN`, which is a documented known limitation (see `docs/qa_findings.md`, Finding 6). | Helps the model capture non-linear relationships between customer tenure and churn. | Helps the model capture non-linear relationships between customer tenure and churn. |
+| TenureBucket | tenure_months | Groups customers into four tenure ranges (0–12, 13–24, 25–48 and 49-72 months). Values greater than 72 months are not assigned to a bucket and currently become `NaN`, which is a documented known limitation (see `docs/qa_findings.md`, Finding 6). | Helps the model capture non-linear relationships between customer tenure and churn. |
 | TotalServicesCount | Service subscription columns | Counts the number of subscribed services (`Yes` values) across phone, internet support and streaming services. | Represents overall customer engagement and service adoption. |
 | AvgMonthlySpend | total_charges, tenure_months | Calculates average spend over the customer's lifetime (`total_charges ÷ tenure_months`), replacing zero tenure with one to avoid division by zero. | Provides a normalized spending metric for modeling customer value. |
 
