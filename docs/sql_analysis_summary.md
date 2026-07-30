@@ -43,8 +43,9 @@ Which customer tenure group experiences the highest churn?
 ### Tenure Buckets
 
 - 0–12 Months
-- 13–36 Months
-- 37+ Months
+- 13–24 Months
+- 25–48 Months
+- 49–72 Months
 
 ### Purpose
 
