@@ -43,8 +43,9 @@ Which customer tenure group experiences the highest churn?
 ### Tenure Buckets
 
 - 0–12 Months
-- 13–36 Months
-- 37+ Months
+- 13–24 Months
+- 25–48 Months
+- 49–72 Months
 
 ### Purpose
 
@@ -108,25 +109,27 @@ Provides reusable tenure-based churn metrics for dashboards and business reporti
 
 # Validation
 
-The SQL queries and analytical views were validated against the SQLite database generated through the ETL pipeline developed in Issue #8.
+The SQL analysis was revalidated against the final SQLite database (`database/churn.db`) after completion of the ETL pipeline, schema updates, and feature engineering.
 
 Validation included:
 
-- Successful execution of all analytical queries
-- Successful creation of SQL views
-- Verification that analytical views return expected results
-- Validation of feature-impact calculations using subgroup-specific churn rates
+- Successfully re-running all analytical SQL queries against the final `customers` table.
+- Verifying that the SQL views execute correctly and return expected results.
+- Confirming that the reported churn metrics remain consistent with the current database.
+- Revalidating feature-impact calculations using the final production dataset.
 
 ---
 
-# Initial Findings
+# Key Findings
 
-Initial analysis indicates:
+The SQL analysis was revalidated against the final SQLite database (`database/churn.db`).
 
-- Overall customer churn is approximately **26.5%**.
-- Month-to-month contracts experience the highest churn rates.
-- Customers with shorter tenure are more likely to churn.
-- Churned customers generally have higher monthly charges than retained customers.
-- Service features such as **Online Security**, **Tech Support**, and **Online Backup** are associated with lower churn rates among subscribers.
+The verified results indicate:
 
-> **Note:** Numerical results should be revalidated whenever the underlying dataset or ETL pipeline is updated.
+- Overall customer churn rate is **26.54%**.
+- Month-to-month contracts continue to experience the highest churn rates.
+- Customers with shorter tenure remain significantly more likely to churn than longer-tenured customers.
+- Churned customers have higher average monthly charges than retained customers.
+- Service features including **Online Security**, **Tech Support**, and **Online Backup** continue to show lower churn rates among subscribers than non-subscribers.
+
+> **Note:** These findings were verified against the final project database. If the ETL pipeline or source dataset changes in future, the SQL queries should be re-run and the documented metrics updated accordingly.
