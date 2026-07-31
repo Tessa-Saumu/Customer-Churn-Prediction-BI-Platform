@@ -1,8 +1,7 @@
 """
 Issue #16 -- FastAPI Testing -- tests/test_api.py
 
-Owner: Pamela's deliverable per Project_Specification.md section 2.6 --
-authored entirely from scratch, no content carried over from Praise's
+Owner: Theresia, no content carried over from Praise's
 (#10/#14) implementation.
 
 Structure
@@ -59,8 +58,18 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
+
+if TYPE_CHECKING:
+    # Type-only import: `from __future__ import annotations` (above)
+    # means annotations are never evaluated at runtime, so this does
+    # NOT reintroduce the model-loading import at collection time --
+    # the real, lazy `from fastapi.testclient import TestClient` inside
+    # the `client` fixture below is unchanged and still what actually
+    # runs.
+    from fastapi.testclient import TestClient
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -91,7 +100,7 @@ def _set_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.fixture()
-def client(monkeypatch: pytest.MonkeyPatch):
+def client(monkeypatch: pytest.MonkeyPatch) -> "TestClient":
     """
     Real TestClient against the real app. Imported lazily inside the
     fixture (not at module top-level) so that a skip via
@@ -140,15 +149,15 @@ def _valid_prediction_payload() -> dict:
 @pytest.mark.unit
 @requires_app_dependencies
 class TestHealthEndpoint:
-    def test_health_returns_200(self, client) -> None:
+    def test_health_returns_200(self, client: "TestClient") -> None:
         response = client.get("/health")
         assert response.status_code == 200
 
-    def test_health_does_not_require_authentication(self, client) -> None:
+    def test_health_does_not_require_authentication(self, client: "TestClient") -> None:
         response = client.get("/health")  # deliberately no X-API-Key header
         assert response.status_code == 200
 
-    def test_health_response_shape(self, client) -> None:
+    def test_health_response_shape(self, client: "TestClient") -> None:
         response = client.get("/health")
         assert response.json() == {"status": "ok"}
 
@@ -164,33 +173,33 @@ class TestHealthEndpoint:
 class TestAuthentication:
     """Issue #16 explicit requirement: authentication behaviour."""
 
-    def test_customers_without_api_key_returns_401(self, client) -> None:
+    def test_customers_without_api_key_returns_401(self, client: "TestClient") -> None:
         response = client.get("/customers")
         assert response.status_code == 401
 
-    def test_customers_with_valid_api_key_returns_200(self, client) -> None:
+    def test_customers_with_valid_api_key_returns_200(self, client: "TestClient") -> None:
         response = client.get("/customers", headers={"X-API-Key": TEST_API_KEY})
         assert response.status_code == 200
 
-    def test_customers_with_empty_api_key_header_returns_401(self, client) -> None:
+    def test_customers_with_empty_api_key_header_returns_401(self, client: "TestClient") -> None:
         response = client.get("/customers", headers={"X-API-Key": ""})
         assert response.status_code == 401
 
-    def test_customers_with_incorrect_api_key_format_returns_401(self, client) -> None:
+    def test_customers_with_incorrect_api_key_format_returns_401(self, client: "TestClient") -> None:
         response = client.get(
             "/customers", headers={"X-API-Key": "not-even-close-to-the-real-key!!"}
         )
         assert response.status_code == 401
 
-    def test_kpis_without_api_key_returns_401(self, client) -> None:
+    def test_kpis_without_api_key_returns_401(self, client: "TestClient") -> None:
         response = client.get("/kpis")
         assert response.status_code == 401
 
-    def test_model_metrics_without_api_key_returns_401(self, client) -> None:
+    def test_model_metrics_without_api_key_returns_401(self, client: "TestClient") -> None:
         response = client.get("/model-metrics")
         assert response.status_code == 401
 
-    def test_predict_without_api_key_returns_401(self, client) -> None:
+    def test_predict_without_api_key_returns_401(self, client: "TestClient") -> None:
         response = client.post("/predict", json=_valid_prediction_payload())
         assert response.status_code == 401
 
@@ -198,11 +207,11 @@ class TestAuthentication:
 @pytest.mark.integration
 @requires_app_dependencies
 class TestCustomersEndpoint:
-    def test_customers_returns_a_list(self, client) -> None:
+    def test_customers_returns_a_list(self, client: "TestClient") -> None:
         response = client.get("/customers", headers={"X-API-Key": TEST_API_KEY})
         assert isinstance(response.json(), list)
 
-    def test_customers_returns_real_schema_field_names(self, client) -> None:
+    def test_customers_returns_real_schema_field_names(self, client: "TestClient") -> None:
         """
         Confirms this endpoint returns real, snake_case DB column
         names (e.g. customer_id) -- not Issue #10's original mock,
@@ -219,11 +228,11 @@ class TestCustomersEndpoint:
 @pytest.mark.integration
 @requires_app_dependencies
 class TestKpisEndpoint:
-    def test_kpis_returns_200(self, client) -> None:
+    def test_kpis_returns_200(self, client: "TestClient") -> None:
         response = client.get("/kpis", headers={"X-API-Key": TEST_API_KEY})
         assert response.status_code == 200
 
-    def test_kpis_response_has_expected_keys(self, client) -> None:
+    def test_kpis_response_has_expected_keys(self, client: "TestClient") -> None:
         response = client.get("/kpis", headers={"X-API-Key": TEST_API_KEY})
         body = response.json()
         for key in (
@@ -235,7 +244,7 @@ class TestKpisEndpoint:
         ):
             assert key in body
 
-    def test_kpis_churn_and_retention_rates_sum_to_100(self, client) -> None:
+    def test_kpis_churn_and_retention_rates_sum_to_100(self, client: "TestClient") -> None:
         response = client.get("/kpis", headers={"X-API-Key": TEST_API_KEY})
         body = response.json()
         assert body["overall_churn_rate"] + body["retention_rate"] == pytest.approx(
@@ -246,17 +255,17 @@ class TestKpisEndpoint:
 @pytest.mark.integration
 @requires_app_dependencies
 class TestModelMetricsEndpoint:
-    def test_model_metrics_returns_200(self, client) -> None:
+    def test_model_metrics_returns_200(self, client: "TestClient") -> None:
         response = client.get("/model-metrics", headers={"X-API-Key": TEST_API_KEY})
         assert response.status_code == 200
 
-    def test_model_metrics_response_has_expected_keys(self, client) -> None:
+    def test_model_metrics_response_has_expected_keys(self, client: "TestClient") -> None:
         response = client.get("/model-metrics", headers={"X-API-Key": TEST_API_KEY})
         body = response.json()
         for key in ("accuracy", "precision", "recall", "roc_auc"):
             assert key in body
 
-    def test_model_metrics_values_are_valid_probabilities(self, client) -> None:
+    def test_model_metrics_values_are_valid_probabilities(self, client: "TestClient") -> None:
         response = client.get("/model-metrics", headers={"X-API-Key": TEST_API_KEY})
         body = response.json()
         for key in ("accuracy", "precision", "recall", "roc_auc"):
@@ -268,7 +277,7 @@ class TestModelMetricsEndpoint:
 class TestPredictEndpointBaseline:
     """Issue #16 explicit requirement: /predict happy-path + schema."""
 
-    def test_predict_with_valid_payload_returns_200(self, client) -> None:
+    def test_predict_with_valid_payload_returns_200(self, client: "TestClient") -> None:
         response = client.post(
             "/predict",
             json=_valid_prediction_payload(),
@@ -276,7 +285,7 @@ class TestPredictEndpointBaseline:
         )
         assert response.status_code == 200
 
-    def test_predict_response_matches_locked_schema(self, client) -> None:
+    def test_predict_response_matches_locked_schema(self, client: "TestClient") -> None:
         response = client.post(
             "/predict",
             json=_valid_prediction_payload(),
@@ -287,7 +296,7 @@ class TestPredictEndpointBaseline:
         assert isinstance(body["churn_probability"], float)
         assert isinstance(body["churn_prediction"], bool)
 
-    def test_predict_probability_is_within_valid_range(self, client) -> None:
+    def test_predict_probability_is_within_valid_range(self, client: "TestClient") -> None:
         response = client.post(
             "/predict",
             json=_valid_prediction_payload(),
@@ -296,7 +305,7 @@ class TestPredictEndpointBaseline:
         probability = response.json()["churn_probability"]
         assert 0.0 <= probability <= 1.0
 
-    def test_predict_is_not_the_retired_mock_constant(self, client) -> None:
+    def test_predict_is_not_the_retired_mock_constant(self, client: "TestClient") -> None:
         """
         Regression guard: Issue #10's mock always returned exactly
         0.42 regardless of input. This alone doesn't prove the real
@@ -316,7 +325,7 @@ class TestPredictEndpointBaseline:
 class TestPredictEndpointEdgeCases:
     """Issue #16 explicit requirement: malformed data, invalid values."""
 
-    def test_predict_with_missing_required_field_returns_422_not_500(self, client) -> None:
+    def test_predict_with_missing_required_field_returns_422_not_500(self, client: "TestClient") -> None:
         response = client.post(
             "/predict",
             json={"gender": "Female"},
@@ -324,7 +333,7 @@ class TestPredictEndpointEdgeCases:
         )
         assert response.status_code == 422
 
-    def test_predict_with_wrong_types_returns_422(self, client) -> None:
+    def test_predict_with_wrong_types_returns_422(self, client: "TestClient") -> None:
         payload = _valid_prediction_payload()
         payload["tenure"] = "not-a-number"
         response = client.post(
@@ -332,7 +341,7 @@ class TestPredictEndpointEdgeCases:
         )
         assert response.status_code == 422
 
-    def test_predict_with_negative_tenure_returns_422(self, client) -> None:
+    def test_predict_with_negative_tenure_returns_422(self, client: "TestClient") -> None:
         """
         CustomerPredictionRequest.tenure has ge=0. Negative tenure is
         a physically impossible value and must be rejected by
@@ -345,7 +354,7 @@ class TestPredictEndpointEdgeCases:
         )
         assert response.status_code == 422
 
-    def test_predict_with_out_of_range_senior_citizen_returns_422(self, client) -> None:
+    def test_predict_with_out_of_range_senior_citizen_returns_422(self, client: "TestClient") -> None:
         """
         CustomerPredictionRequest.SeniorCitizen has ge=0, le=1 (must
         be exactly 0 or 1). An impossible value like 5 must be
@@ -358,7 +367,7 @@ class TestPredictEndpointEdgeCases:
         )
         assert response.status_code == 422
 
-    def test_predict_with_negative_monthly_charges_returns_422(self, client) -> None:
+    def test_predict_with_negative_monthly_charges_returns_422(self, client: "TestClient") -> None:
         payload = _valid_prediction_payload()
         payload["MonthlyCharges"] = -70.05
         response = client.post(
@@ -366,13 +375,13 @@ class TestPredictEndpointEdgeCases:
         )
         assert response.status_code == 422
 
-    def test_predict_with_empty_json_body_returns_422(self, client) -> None:
+    def test_predict_with_empty_json_body_returns_422(self, client: "TestClient") -> None:
         response = client.post(
             "/predict", json={}, headers={"X-API-Key": TEST_API_KEY}
         )
         assert response.status_code == 422
 
-    def test_predict_error_response_has_detail_field(self, client) -> None:
+    def test_predict_error_response_has_detail_field(self, client: "TestClient") -> None:
         """
         FastAPI's standard validation error shape includes a "detail"
         key describing what failed -- confirms /predict's 422s are
@@ -386,7 +395,7 @@ class TestPredictEndpointEdgeCases:
         )
         assert "detail" in response.json()
 
-    def test_predict_with_unseen_category_does_not_return_500(self, client) -> None:
+    def test_predict_with_unseen_category_does_not_return_500(self, client: "TestClient") -> None:
         """
         A category value that plausibly never appeared during
         training (the trained OneHotEncoder uses

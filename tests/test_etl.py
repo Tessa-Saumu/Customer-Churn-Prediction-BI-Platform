@@ -1,7 +1,7 @@
 """
 Issue #13 -- ETL & Database Testing -- tests/test_etl.py
 
-Owner: Pamela's deliverable per Project_Specification.md section 2.6 --
+Owner: Theresia --
 authored entirely from scratch for this issue, no content carried over
 from Mercy's (#8), Praise's (#10), or Latifah's (#11) work.
 
