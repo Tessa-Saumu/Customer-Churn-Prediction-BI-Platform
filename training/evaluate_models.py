@@ -1,6 +1,7 @@
 import logging
 import sys
 from pathlib import Path
+from sklearn.base import ClassifierMixin
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -29,20 +30,18 @@ MODEL_PATH.mkdir(parents=True, exist_ok=True)
 # Define a function to evaluate a single model
 def evaluate_model(
     model_name: str,
-    model,
-    X_test,
-    y_test,
+    model: ClassifierMixin,
+    X_test: pd.DataFrame,
+    y_test: pd.Series,
 ) -> dict[str, Any]:
     """
     Evaluate a trained model on the test set and return evaluation metrics.
     """
     logger.info("Evaluating %s model...", model_name)
 
-    # Make predictions on the test set
     y_pred = model.predict(X_test)
-    y_proba = model.predict_proba(X_test)[:, 1]  # Probability estimates for the positive class
+    y_proba = model.predict_proba(X_test)[:, 1]
 
-    # Calculate evaluation metrics
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
@@ -64,9 +63,9 @@ def evaluate_model(
         "precision": precision,
         "recall": recall,
         "roc_auc": roc_auc,
-        "confusion_matrix": conf_matrix.tolist(),  # Convert to list for easier serialization
+        "confusion_matrix": conf_matrix.tolist(),
     }
-
+    
 # Define a function to evaluate all models
 def evaluate_all_models() -> pd.DataFrame:
     """

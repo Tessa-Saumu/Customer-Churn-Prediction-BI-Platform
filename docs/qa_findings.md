@@ -627,7 +627,7 @@ def evaluate_model(
 **Not fixed here.** `training/` belongs to Latifah (Issue #11), and
 per the "document, don't silently patch another owner's file" rule
 already applied to Findings 6, 7, and 9, this is documented rather
-than corrected in this pass. **Deferred to Issue #20** (final
+than corrected in this pass. **Fixed in Issue #20** (final
 integration pass / repo-wide cleanup and standards sign-off, owned by
 Theresia), where the full codebase's typing/logging/print compliance
 gets a final, authoritative sweep and any remaining gaps like this
@@ -690,7 +690,7 @@ skip-guard's required files are in place.
 | 11 | `etl/clean_data.py` -- deprecated `select_dtypes(include="object")` (pandas 3.x) | Low (cosmetic today, environment-dependent) | Documented, flagged for Mercy |
 | 12 | `tests/test_sql_views.py` (Salome) — no skip-guard, hard-fails on fresh clone | Medium (blocked a clean regression pass; product code unaffected) | **Fixed** — skip-guard added under Issue #19's test-suite edit mandate, verified across 3 pipeline states |
 | 13 | `database/init_views.py` (Mercy) — no idempotency test coverage | Low (function itself confirmed safe; coverage gap only) | **Fixed** — `TestViewsIdempotency` added |
-| 14 | `training/` (Latifah) — 3 functions with untyped params (`evaluate_models.py`, `train_models.py`, `train_test_split.py`) | Low (no behavioral impact; inconsistent with project's own typing convention) | Documented with exact fix; **deferred to Issue #20** (final integration/cleanup, Theresia) |
+| 14 | `training/` (Latifah) — 3 functions with untyped params (`evaluate_models.py`, `train_models.py`, `train_test_split.py`) | Low (no behavioral impact; inconsistent with project's own typing convention) | Documented with exact fix; **fixed in Issue #20** (final integration/cleanup, Theresia) |
 | 15 | `tests/test_api.py` (Theresia, this sprint) — `client` fixture lacked return annotation (cascaded to 30 call sites) | Low (no behavioral impact; single root cause) | **Fixed** — fixture and all 30 call sites annotated, verified live |
 
 No blocking issues remain. Findings 1-11 are unchanged from the

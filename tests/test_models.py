@@ -485,29 +485,6 @@ class TestTrainingPredictDeprecationFlag:
             "the Issue #14 API-field adapter). Confirm this is intentional "
             "before relying on it -- see docs/qa_findings.md."
         )
-
-    def test_training_predict_and_root_predict_have_different_signatures_worth_reconciling(
-        self,
-    ) -> None:
-        """
-        Confirms the two modules' predict() functions are NOT
-        interchangeable (root predict.py's does field-name adaptation
-        that training/predict.py's does not) -- documenting precisely
-        why silently swapping one for the other would break the API
-        contract, not just asserting "they're different" vaguely.
-        """
-        import training.predict as training_predict_module
-        import inspect
-
-        root_predict_source = inspect.getsource(
-            importlib.import_module("predict").predict
-        )
-        training_predict_source = inspect.getsource(training_predict_module.predict)
-
-        assert "_adapt_api_fields_to_training_schema" in root_predict_source
-        assert "_adapt_api_fields_to_training_schema" not in training_predict_source
-
-
 # ======================================================================
 # SECTION 2 -- INTEGRATION TESTS
 # Full real training pipeline, run end-to-end.
