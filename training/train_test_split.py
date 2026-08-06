@@ -1,6 +1,8 @@
 import logging
 import sys
 from pathlib import Path
+import pandas as pd
+from sklearn.compose import ColumnTransformer
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -25,7 +27,9 @@ RANDOM_STATE = 42
 """ split_training_data function is responsible for preparing the training data, 
 building the preprocessor, and splitting the data into train and test sets. 
 It returns the train and test sets along with the preprocessor."""
-def split_training_data():
+def split_training_data() -> tuple[
+    pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, ColumnTransformer
+]:
     logger.info("Preparing training data...")
     X, y = prepare_training_data()
 
