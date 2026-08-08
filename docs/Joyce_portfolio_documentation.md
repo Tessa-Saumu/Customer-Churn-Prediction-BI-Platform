@@ -172,14 +172,14 @@ One important part of the dashboard development was replacing hardcoded dashboar
 
 For example, the Best Model was initially hardcoded as:
 
-```DAX
+DAX
 Best Model = 
 "Logistic Regression"
-```
+
 
 This was later changed to a dynamic calculation that identifies the model with the highest ROC AUC:
 
-```DAX
+DAX
 Best Model = 
 CALCULATE(
     SELECTEDVALUE(model_comparison[Model]),
@@ -190,13 +190,13 @@ CALCULATE(
         DESC
     )
 )
-```
+
 
 This means the dashboard can determine the best-performing model from the data rather than relying on a manually entered model name.
 
 I also created dynamic measures for the model evaluation summary and confusion matrix summary.
 
----
+
 
 ## 6. Dashboard Validation
 
