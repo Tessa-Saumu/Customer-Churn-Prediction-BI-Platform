@@ -377,6 +377,28 @@ Whenever the underlying data changes (new ETL run, updated views, or a new model
 
 No credentials or machine-specific paths (e.g. absolute local file paths, usernames) should ever be committed alongside the `.pbix` file. The DSN name (`ChurnDB`) and the `ProjectPath` parameter are the only environment-specific details the dashboard depends on, and both must be set locally by each team member following the steps above. 
 
+### Dashboard Screenshots
+
+#### Executive Overview
+
+![Executive Overview](dashboard/screenshots/executive_overview.png.jpg)
+
+#### Customer Demographics
+
+![Customer Demographics](dashboard/screenshots/customer_demographics.png.jpg)
+
+#### Churn Drivers
+
+![Churn Drivers](dashboard/screenshots/churn_drivers.png.jpg)
+
+#### Revenue Impact
+
+![Revenue Impact](dashboard/screenshots/revenue_impact.png.jpg)
+
+#### Model Predictions
+
+![Model Predictions](dashboard/screenshots/model_predictions.png.jpg)
+
 ### Business Report
 
 A business-focused interpretation of the dashboard findings, including key insights and actionable recommendations, is available in: 
