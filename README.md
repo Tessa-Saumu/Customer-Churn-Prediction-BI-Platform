@@ -171,6 +171,8 @@ All endpoints require an `X-API-Key` header except `/health`.
 
 ## Team & Responsibilities
 
+
+
 | Name       | Role                          | Deliverables                                                             |
 |-----------|-------------------------------|-------------------------------------------------------------------------|
 | **Theresia** | Team Lead                    | Sprint planning, GitHub issues, board maintenance, standups, coding standards, final integration, presentation coordination |
@@ -183,7 +185,43 @@ All endpoints require an `X-API-Key` header except `/health`.
 
 **Coordination note:** Joyce and Salome must stay in sync — the dashboard connects directly to the SQL views Salome produces, so any change to view names or structure should be communicated directly, not left to surface at standup. 
 
----
+
+## My Contribution — Joyce
+
+I contributed to this collaborative Customer Churn Prediction & Business Intelligence project as the **Lead BI & Analytics Developer**.
+
+My work focused on:
+
+- Building the 5-page Power BI dashboard.
+- Connecting Power BI to the SQLite database through ODBC.
+- Working with SQL views as dashboard data sources.
+- Creating DAX measures and dynamic dashboard logic.
+- Integrating machine-learning evaluation results into the Model Predictions page.
+- Developing business-focused churn and revenue visualizations.
+- Writing business insights and recommendations.
+- Validating dashboard results against the underlying data.
+- Applying review feedback and improving the dashboard.
+- Documenting my work and maintaining the project through Git/GitHub.
+
+### Dashboard Pages
+
+1. Executive Overview
+2. Customer Demographics
+3. Churn Drivers
+4. Revenue Impact
+5. Model Predictions
+
+### Portfolio Documentation
+
+My detailed contribution, development process, challenges, validation steps, and lessons learned are documented here:
+
+[Joyce's Project Documentation](https://github.com/joyce-ai4health/Customer-Churn-Prediction-BI-Platform/blob/main/docs/Joyce_portfolio_documentation.md)
+
+### Dashboard Screenshots
+
+The five dashboard pages are available in:
+
+`dashboard/screenshots/`
 
 ## Milestones
 
