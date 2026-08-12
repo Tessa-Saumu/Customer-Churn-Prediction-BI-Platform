@@ -1,70 +1,77 @@
 IMAGE_NAME := customer-churn-api
 CONTAINER_NAME := customer-churn-api
-PORT := 8000
+API_PORT := 8000
+STREAMLIT_PORT := 8501
 
-.PHONY: help build run start stop restart logs test shell clean rebuild train \
-        health api
+.PHONY: help build run start stop restart logs logs-api logs-ui \
+        test test-api status shell clean rebuild
 
 help:
+	@echo ""
 	@echo "Customer Churn Prediction & BI Platform"
 	@echo ""
-	@echo "Available commands:"
-	@echo "  make build    Build Docker image and train model"
-	@echo "  make run      Run container in foreground"
-	@echo "  make start    Build image and start container"
-	@echo "  make stop     Stop container"
-	@echo "  make restart  Restart container"
-	@echo "  make logs     Follow container logs"
-	@echo "  make test     Run pytest"
-	@echo "  make health   Check API health"
-	@echo "  make api      Open API documentation URL"
-	@echo "  make shell    Open shell inside container"
-	@echo "  make clean    Remove container"
-	@echo "  make rebuild  Clean and rebuild image"
+	@echo "Docker commands:"
+	@echo "  make build       Build API and Streamlit images"
+	@echo "  make run         Start services in foreground"
+	@echo "  make start       Start services in background"
+	@echo "  make stop        Stop services"
+	@echo "  make restart     Restart services"
+	@echo "  make logs        Follow all logs"
+	@echo "  make logs-api    Follow API logs"
+	@echo "  make logs-ui     Follow Streamlit logs"
+	@echo "  make status      Show service status"
+	@echo "  make shell       Open API container shell"
+	@echo "  make clean       Stop and remove containers"
+	@echo "  make rebuild     Rebuild images without cache"
+	@echo ""
+	@echo "Testing:"
+	@echo "  make test        Run pytest"
+	@echo "  make test-api    Test API health endpoint"
 	@echo ""
 
 build:
-	docker build -t $(IMAGE_NAME) .
+	docker compose build
 
 run:
-	docker run --rm \
-		--name $(CONTAINER_NAME) \
-		--env-file .env \
-		-p $(PORT):8000 \
-		$(IMAGE_NAME)
+	docker compose up
 
-start: build
-	docker run -d \
-		--name $(CONTAINER_NAME) \
-		--env-file .env \
-		-p $(PORT):8000 \
-		$(IMAGE_NAME)
+start:
+	docker compose up -d
 
 stop:
-	docker stop $(CONTAINER_NAME) 2>/dev/null || true
+	docker compose down
 
-restart: stop start
+restart:
+	docker compose down
+	docker compose up -d
 
 logs:
-	docker logs -f $(CONTAINER_NAME)
+	docker compose logs -f
+
+logs-api:
+	docker compose logs -f api
+
+logs-ui:
+	docker compose logs -f streamlit
+
+status:
+	docker compose ps
 
 test:
 	python -m pytest
 
-health:
-	curl http://localhost:$(PORT)/health
-
-api:
-	@echo "API: http://localhost:$(PORT)"
-	@echo "Swagger: http://localhost:$(PORT)/docs"
-	@echo "ReDoc: http://localhost:$(PORT)/redoc"
+test-api:
+	curl --fail http://localhost:$(API_PORT)/health
+	@echo ""
+	@echo "API health check passed."
 
 shell:
-	docker exec -it $(CONTAINER_NAME) /bin/bash
+	docker compose exec api /bin/bash
 
 clean:
-	docker stop $(CONTAINER_NAME) 2>/dev/null || true
-	docker rm $(CONTAINER_NAME) 2>/dev/null || true
+	docker compose down --remove-orphans
 
-rebuild: clean
-	docker build --no-cache -t $(IMAGE_NAME) .
+rebuild:
+	docker compose down --remove-orphans
+	docker compose build --no-cache
+	docker compose up -d
