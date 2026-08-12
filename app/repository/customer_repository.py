@@ -35,13 +35,33 @@ def _row_to_dict(cursor: sqlite3.Cursor, row: tuple[Any, ...]) -> dict[str, Any]
 
 
 class CustomerRepository:
-    def get_all(self) -> list[dict[str, Any]]:
+    def get_all(
+        self,
+        page: int = 0,
+        size: int = 100,
+    ) -> list[dict[str, Any]]:
+        if page < 0:
+            raise ValueError("page must be >= 0")
+        if size <= 0:
+            raise ValueError("size must be > 0")
+
+        limit = size
+        offset = page * size
+
         connection = get_connection()
         try:
-            cursor = connection.execute("SELECT * FROM customers")
+            cursor = connection.execute(
+                "SELECT * FROM customers LIMIT ? OFFSET ?",
+                (limit, offset),
+            )
             rows = cursor.fetchall()
             result = [_row_to_dict(cursor, row) for row in rows]
-            logger.info("get_all returned %d customers", len(result))
+            logger.info(
+                "get_all returned %d customers (page=%d, size=%d)",
+                len(result),
+                page,
+                size,
+            )
             return result
         finally:
             connection.close()
