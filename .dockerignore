@@ -1,0 +1,28 @@
+.git
+.gitignore
+.github
+
+venv
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+
+.env
+
+# Don't send generated artifacts from the host into the build.
+# They will be recreated inside Docker.
+database/*.db
+models/*.pkl
+evaluation/model_comparison.md
+evaluation/model_comparison.csv
+
+# Power BI
+*.pbix
+
+# Tests/local tooling
+.coverage
+htmlcov
+
+# Logs
+*.log

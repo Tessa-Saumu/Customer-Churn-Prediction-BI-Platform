@@ -19,15 +19,19 @@ Summary of changes from Issue #10:
   archived, not deleted -- see that file's own docstring).
 """
 
+
 import logging
 import sys
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.repository.customer_repository import CustomerRepository
-from app.schemas.customer_schema import CustomerPredictionRequest, CustomerPredictionResponse
+from app.schemas.customer_schema import (
+    CustomerPredictionRequest,
+    CustomerPredictionResponse,
+)
 from app.services.auth_service import verify_api_key
 from app.services.kpi_service import get_kpis as compute_kpis
 from app.services.metrics_service import get_model_metrics as load_model_metrics
@@ -36,11 +40,12 @@ from app.services.metrics_service import get_model_metrics as load_model_metrics
 # app/ -- same sys.path pattern used in customer_repository.py and
 # database/init_db.py for the same reason (direct script / uvicorn
 # invocation doesn't otherwise put the repo root on sys.path).
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from predict import predict as real_predict  # noqa: E402  (see sys.path note above)
+from predict import predict as real_predict  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -53,9 +58,16 @@ def health() -> dict[str, str]:
 
 
 @router.get("/customers", dependencies=[Depends(verify_api_key)])
-def get_customers() -> list[dict[str, Any]]:
-    logger.info("get_customers called (real data via CustomerRepository)")
-    return CustomerRepository().get_all()
+def get_customers(
+    page: int = Query(default=0, ge=0),
+    size: int = Query(default=100, gt=0),
+) -> list[dict[str, Any]]:
+    logger.info(
+        "get_customers called (page=%d, size=%d, real data via CustomerRepository)",
+        page,
+        size,
+    )
+    return CustomerRepository().get_all(page=page, size=size)
 
 
 @router.get("/kpis", dependencies=[Depends(verify_api_key)])
@@ -64,17 +76,17 @@ def get_kpis() -> dict[str, Any]:
     return compute_kpis()
 
 
-@router.post("/predict", response_model=CustomerPredictionResponse, dependencies=[Depends(verify_api_key)])
+@router.post(
+    "/predict",
+    response_model=CustomerPredictionResponse,
+    dependencies=[Depends(verify_api_key)],
+)
 def predict(request: CustomerPredictionRequest) -> CustomerPredictionResponse:
     logger.info("predict called (real model via predict.py)")
     try:
         result = real_predict(request.model_dump())
     except Exception:
-        # The real model can fail in ways the mock never could (e.g.
-        # an unseen category the trained encoder doesn't recognize).
-        # Issue #10 had no failure path here since mock_predict()
-        # couldn't fail; this is new in #14 and worth a reviewer's
-        # attention -- flagged in PR Notes.
+        # The real model can fail in ways the mock never could.
         logger.exception("Real prediction failed for request")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -82,9 +94,7 @@ def predict(request: CustomerPredictionRequest) -> CustomerPredictionResponse:
         )
 
     # Defensive contract check: predict.py's return shape is a locked
-    # interface (Project_Specification.md section 4) that this PR does
-    # not own. If it ever drifts, fail loudly here rather than let
-    # FastAPI's response_model validation produce a less legible 500.
+    # interface (Project_Specification.md section 4).
     if set(result.keys()) != {"churn_probability", "churn_prediction"}:
         logger.error("predict() returned unexpected shape: %s", result.keys())
         raise HTTPException(
