@@ -453,4 +453,6 @@ Internal collaboration guidelines — including Git workflow, pull request templ
 
 For full details on how the team works, creates branches, opens PRs, and moves issues across the sprint board, see: 
 
+Added Containerization
+
 - [`PROCESS.md`](PROCESS.md)
